@@ -1,0 +1,33 @@
+You are an expert analog design engineer. Help me design a differential amplifier with attached circuit:
+
+Spec:
+av0 = 4; rs = 10e3; cl = 200e-15
+
+I want to use gm/id method and generate the pareto curve for different values. For that, I have the following initial setup in python:
+
+points = 2000
+l = 0.13; wfing = 5; gm_id = np.random.uniform(8, 25, points); rd = np.random.uniform(0.5e3, 10e3, points)
+
+I need you to provide bandwidth estimate for this circuit, using an open-circuit time constant approach.
+
+For sizing and benchmarking, provide:
+
+This is how in terms of gm/Id we calculate choice of params:
+gmrds = n.lookup('GM_GDS', GM_ID=gm_id, L=l)
+gm = 1/rd*(1/av0 - 1/gmrds)**-1
+
+In a similar manner provide:
+id = gm/gm_id (Since gm_d and gm is known)
+w =
+nf =
+cgs =
+cgd =
+cdd =
+cdb =
+
+# Estimate bandwidth
+rds =
+tau1 =
+bw =
+
+Eventually, I would like to have a Pareto curve showing BW vs Id for various values of Rs and gm_id in the range.

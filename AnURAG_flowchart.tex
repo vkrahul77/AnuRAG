@@ -1,0 +1,311 @@
+\documentclass[border=10pt]{standalone}
+\usepackage[utf8]{inputenc}
+\usepackage{tikz}
+\usetikzlibrary{shapes.geometric, arrows.meta, positioning, calc, fit, backgrounds, shadows.blur}
+\usepackage{xcolor}
+
+% ── Colour palette ──────────────────────────────────────────
+\definecolor{srcblue}{HTML}{1565C0}
+\definecolor{embedorange}{HTML}{E65100}
+\definecolor{vdbpurple}{HTML}{6A1B9A}
+\definecolor{userteal}{HTML}{00695C}
+\definecolor{raggreen}{HTML}{2E7D32}
+\definecolor{rankgold}{HTML}{F57F17}
+\definecolor{paretored}{HTML}{C62828}
+\definecolor{verifblue}{HTML}{0277BD}
+\definecolor{decisioncyan}{HTML}{00838F}
+\definecolor{outputgreen}{HTML}{1B5E20}
+\definecolor{loopred}{HTML}{B71C1C}
+\definecolor{finalteal}{HTML}{004D40}
+\definecolor{lightbg}{HTML}{F5F5F5}
+
+% ── TikZ styles ─────────────────────────────────────────────
+\tikzset{
+    base/.style = {
+        draw, rounded corners=4pt, align=center,
+        font=\sffamily\small, minimum height=1.1cm,
+        text width=5.8cm, blur shadow={shadow blur steps=4, shadow xshift=0.8pt, shadow yshift=-0.8pt}
+    },
+    source/.style   = {base, fill=srcblue!12,   draw=srcblue,   thick},
+    embed/.style    = {base, fill=embedorange!12,draw=embedorange,thick},
+    vdb/.style      = {base, fill=vdbpurple!10,  draw=vdbpurple,  thick, 
+                        shape=cylinder, aspect=0.25, minimum height=1.3cm,
+                        shape border rotate=90, text width=5cm},
+    user/.style     = {base, fill=userteal!12,   draw=userteal,   thick,
+                        chamfered rectangle, chamfered rectangle xsep=2cm},
+    rag/.style      = {base, fill=raggreen!12,   draw=raggreen,   thick},
+    rank/.style     = {base, fill=rankgold!12,   draw=rankgold,   thick, text width=6.2cm},
+    pareto/.style   = {base, fill=paretored!10,  draw=paretored,  thick, text width=6.2cm},
+    verif/.style    = {base, fill=verifblue!10,  draw=verifblue,  thick},
+    decide/.style   = {draw, diamond, aspect=2.6, align=center,
+                        font=\sffamily\small, inner sep=2pt,
+                        fill=decisioncyan!12, draw=decisioncyan, thick,
+                        blur shadow={shadow blur steps=4, shadow xshift=0.8pt, shadow yshift=-0.8pt}},
+    output/.style   = {base, fill=outputgreen!10,draw=outputgreen, thick, text width=6.2cm},
+    final/.style    = {base, fill=finalteal!10,  draw=finalteal,  thick, text width=6.2cm},
+    arr/.style      = {-{Stealth[length=3.5mm, width=2.5mm]}, thick, color=#1},
+    arr/.default     = black,
+    looparr/.style  = {-{Stealth[length=3.5mm, width=2.5mm]}, thick, color=loopred, dashed},
+    labelbox/.style = {font=\sffamily\scriptsize\itshape, text=gray!70!black},
+}
+
+% ════════════════════════════════════════════════════════════
+%  ABSTRACT (for paper — compile separately or paste into main .tex)
+% ════════════════════════════════════════════════════════════
+%
+% \begin{abstract}
+% The automation of analog integrated circuit (IC) design remains
+% fundamentally constrained by the high dimensionality of continuous
+% design spaces and the need for rigorous physical intuition.
+% Simulation-centric ``black-box'' strategies such as Reinforcement
+% Learning and Bayesian Optimization attempt to bridge this gap, yet
+% they operate as opaque sizing oracles: each candidate requires a
+% full SPICE evaluation, leading to extreme sample inefficiency and
+% yielding uninterpretable sizing decisions.  In this work, we
+% introduce \textbf{AnuRAG} (\textbf{An}alog Design Framework with
+% \textbf{u}nified \textbf{R}etrieval-\textbf{A}ugmented
+% \textbf{G}eneration), a two-stage ``white-box'' assistant that
+% augments the human designer rather than replacing them.
+%
+% AnuRAG operates in two explicit stages.  In \emph{Stage~1
+% (Topology Selection)}, a ReAct-style agent backed by Gemini~2.0
+% performs hybrid retrieval (semantic search over 768-dimensional
+% \texttt{text-embedding-004} vectors combined with BM25 keyword
+% matching) against a curated knowledge base of 406 sources---402
+% IEEE JSSC papers spanning 2000--2024 and four canonical
+% textbooks---comprising 17\,769 embedded chunks derived from
+% 10\,929 text segments and 16\,132 images.  The agent applies
+% physics-grounded feasibility checks (voltage headroom, swing
+% constraints, intrinsic-gain limits) to prune infeasible candidates
+% and returns a ranked shortlist with explicit literature citations.
+% In \emph{Stage~2 (Design-Space Exploration)}, the same RAG engine
+% switches to equation-driven code generation: it emits executable
+% Python scripts that sweep $g_m/I_D$ look-up tables across the
+% design space, producing Pareto frontiers over $>$10\,000 sizing
+% points---\emph{without a single SPICE call}.  A sparse
+% verification loop then samples $\sim$5 anchor points along the
+% frontier for SPICE simulation; if the analytical--simulated error
+% exceeds 10\%, the framework automatically re-calibrates its
+% equations and regenerates the frontier.
+%
+% We evaluate AnuRAG on OTA design tasks in the IHP SG13G2 130\,nm
+% BiCMOS open-source PDK.  On a folded-cascode benchmark
+% (Gain\,$\geq$\,70\,dB, GBW\,$\geq$\,500\,MHz, $C_L{=}500$\,fF),
+% Stage~1 returns a ranked topology shortlist from 406 sources in
+% under 60\,s.  Stage~2 produces a 10\,000-point Pareto frontier
+% whose analytical predictions match SPICE within 8--12\,\% at five
+% anchor points, requiring only 5 simulations versus $>$500 for a
+% comparable Bayesian-optimization baseline.
+% \end{abstract}
+%
+% ════════════════════════════════════════════════════════════
+
+\begin{document}
+\begin{tikzpicture}[
+    node distance=0.9cm and 1.4cm,
+    base/.append style={text width=4.6cm, minimum height=1.0cm},
+]
+
+% ════════════════════════════════════════════════════════════
+%  ROW 0 (TOP) — Offline Knowledge-Base Construction
+% ════════════════════════════════════════════════════════════
+\node[source, text width=4.2cm]
+    (raw) {\textbf{Raw Sources}\\[2pt]
+            Textbooks, Papers,\\
+            Lecture Notes (Text \& Images)};
+
+\node[embed, right=2.0cm of raw, text width=5.0cm]
+    (emb) {\textbf{Embedding Pipeline}\\[2pt]
+            Text $\rightarrow$ \texttt{text-embedding-004}\\
+            Images $\rightarrow$ Google Vision caption\\
+            \hphantom{Images} $\rightarrow$ \texttt{text-embedding-004}};
+
+\node[vdb, right=2.0cm of emb, text width=4.0cm]
+    (vdb) {\textbf{Vector Database}\\[2pt]
+            Embedded Knowledge\\Base};
+
+% ════════════════════════════════════════════════════════════
+%  ROW 1 — STAGE 1: Topology Selection (left to right)
+% ════════════════════════════════════════════════════════════
+\node[user, below=3.0cm of raw, text width=4.6cm]
+    (user1) {\textbf{User Query\,---\,Specs}\\[2pt]
+             Gain $\geq$ 70\,dB,\  GBW $\geq$ 500\,MHz\\
+             $C_L{=}500$\,fF,\ Swing $\geq$ 1.0\,V$_{\text{pp,diff}}$};
+
+\node[rag, right=2.0cm of user1, text width=5.0cm]
+    (rag1) {\textbf{RAG Engine}\\[1pt]
+             \footnotesize\textit{Mode: Topology Selection}\\[2pt]
+             \small LLM + Vector Retrieval\\
+             Feasible Topology Suggestion\\
+             (voltage headroom, supply limits, etc.)};
+
+\node[rank, right=2.0cm of rag1, text width=5.0cm]
+    (ranked) {\textbf{Ranked Candidate Topologies}\\[2pt]
+              1.\ Folded Cascode\\
+              2.\ Two-Stage OTA\\
+              3.\ Telescopic OTA\\[2pt]
+              \footnotesize grounded in literature references};
+
+% -- Stage 1 label (anchored to top-left of user1 box) --
+\node[font=\sffamily\bfseries\small, text=srcblue,
+      anchor=south west] at ([shift={(-0.2cm,0.35cm)}]user1.north west)
+    (s1label) {STAGE 1 \textemdash\ Topology Selection};
+
+% ════════════════════════════════════════════════════════════
+%  ROW 2 — STAGE 2: Design-Space Exploration (left to right)
+% ════════════════════════════════════════════════════════════
+\node[user, below=3.2cm of user1, text width=4.6cm]
+    (user2) {\textbf{User Query\,---\,Design}\\[2pt]
+             Trade-off specifications \&\\
+             extended design considerations};
+
+\node[rag, right=2.0cm of user2, text width=5.0cm]
+    (pareto) {\textbf{RAG Engine}\\[1pt]
+              \footnotesize\textit{Mode: Equation-Driven Code Gen.}\\[2pt]
+              \small $\bullet$ Analytical design equations\\
+              $\bullet$ Executable Python \& sizing\\
+              $\bullet$ Pareto: 10\,000+ design pts\\
+              \footnotesize (Power vs.\ BW, Gain vs.\ Swing)};
+
+\node[verif, right=2.0cm of pareto, text width=4.6cm]
+    (verif) {\textbf{Sparse SPICE Verification}\\[2pt]
+              $\sim$5 anchor points along\\
+              Pareto $\rightarrow$ SPICE simulations};
+
+% -- Stage 2 label (anchored to top-left of user2 box) --
+\node[font=\sffamily\bfseries\small, text=paretored,
+      anchor=south west] at ([shift={(-0.2cm,0.35cm)}]user2.north west)
+    (s2label) {STAGE 2 \textemdash\ Design-Space Exploration};
+
+% ════════════════════════════════════════════════════════════
+%  ROW 3 — Verification Decision & Outputs
+% ════════════════════════════════════════════════════════════
+\node[decide, below=2.2cm of verif, text width=3.0cm]
+    (dec) {\textbf{Error $<$ 10\,\%?}\\[2pt]
+            Sims $\approx$ Analytical?};
+
+% ── Feedback loop (mismatch) — left of decision ──
+\node[base, fill=loopred!10, draw=loopred, thick,
+      left=2.2cm of dec, text width=4.2cm]
+    (adjust) {\textbf{Equation Re-calibration}\\[2pt]
+               Adjust analytical model\\
+               via RAG Engine};
+
+% ── Match path — right of decision ──
+\node[output, right=2.2cm of dec, text width=4.8cm]
+    (optimal) {\textbf{Validated Design Space}\\[2pt]
+                $\bullet$ Verified Pareto frontier\\
+                $\bullet$ Sizing scripts \\
+                $\bullet$ Recommended design points};
+
+\node[final, below=1.8cm of optimal, text width=4.8cm]
+    (final) {\textbf{Designer Selection}\\[2pt]
+              Select preferred topology \& sizing;\\
+              optionally re-query for\\
+              alternative trade-off points};
+
+% ════════════════════════════════════════════════════════════
+%  ARROWS — carefully routed to avoid crossing content
+% ════════════════════════════════════════════════════════════
+
+% -- Row 0: Knowledge-base path --
+\draw[arr=srcblue]    (raw)  -- (emb);
+\draw[arr=embedorange](emb)  -- (vdb);
+
+% -- VDB retrieval: trunk to RIGHT of ranked, drops down, branches left+down to RAGs --
+\coordinate (retr-col)     at ([xshift=0.8cm]ranked.east);    % just right of ranked box
+\coordinate (above-rag1)   at ([yshift=1.0cm]rag1.north);     % waypoint above Stage-1 RAG
+\coordinate (above-pareto) at ([yshift=1.0cm]pareto.north);   % waypoint above Stage-2 RAG
+% Horizontal from VDB to retrieval column (right of ranked)
+\draw[thick, color=vdbpurple]
+    (vdb.south) -- (vdb.south |- above-rag1) -- (retr-col |- above-rag1);
+\node[labelbox, right=3pt] at ([yshift=-0.6cm]vdb.south) {retrieval};
+% Vertical drop from Stage-1 branch level to Stage-2 branch level
+\draw[thick, color=vdbpurple]
+    (retr-col |- above-rag1) -- (retr-col |- above-pareto);
+% Branch to Stage-1 RAG: LEFT from column then DOWN into rag1.north
+\draw[arr=vdbpurple]
+    (retr-col |- above-rag1) -- (above-rag1) -- (rag1.north);
+% Branch to Stage-2 RAG: LEFT from column then DOWN into pareto.north
+\draw[arr=vdbpurple, densely dashed]
+    (retr-col |- above-pareto) -- (above-pareto) -- (pareto.north);
+
+% -- Stage 1 flow (left to right) --
+%    user→RAG enters upper-left; re-query enters lower-left (see below)
+\draw[arr=userteal]  (user1.east)  -- (rag1.west);
+\draw[arr=raggreen]  (rag1)   -- (ranked);
+
+% -- Transition Stage 1 → Stage 2 --
+%    Goes down from ranked, sweeps left, enters user2 from the LEFT
+\coordinate (trans-entry) at ([xshift=-1.0cm]user2.west);
+\draw[arr=rankgold]
+    (ranked.south) -- ++(0,-1.0)
+    -| (trans-entry)
+    -- ([yshift=0pt]user2.west);
+
+% -- Stage 2 flow (left to right) --
+\draw[arr=userteal]  (user2.east)   -- (pareto.west);
+\draw[arr=raggreen]  (pareto)  -- (verif);
+
+% -- Verification → Decision (straight down) --
+\draw[arr=verifblue] (verif) -- (dec);
+
+% -- Decision: No → Re-calibration --
+\draw[looparr] (dec.west)
+    -- node[labelbox, above]{\textbf{No}} (adjust.east);
+
+% -- Re-calibration → loop back up to Stage-2 RAG --
+%    Straight vertical line up from adjust to pareto.south, label on right
+\draw[looparr] (adjust.north)
+    -- node[labelbox, right]{\footnotesize re-generate} (pareto.south);
+
+% -- Decision: Yes → Validated --
+\draw[arr=outputgreen] (dec.east)
+    -- node[labelbox, above]{\textbf{Yes}} (optimal.west);
+
+% -- Validated → Designer Selection --
+\draw[arr=finalteal] (optimal) -- (final);
+
+% -- Re-query: trunk centered between User Query & RAG columns, vertical up, splits to RAGs --
+\coordinate (rq-x) at ($(user1.east)!0.5!(rag1.west)$);     % x = midpoint between user & RAG
+% Fork coordinates at EXACT same y as entry points (no angle)
+\path ([yshift=-10pt]rag1.west)    coordinate (rag1-entry);
+\path ([yshift=-10pt]pareto.west)  coordinate (pareto-entry);
+\coordinate (rq-s1)     at (rq-x |- rag1-entry);             % fork at entry y
+\coordinate (rq-s2)     at (rq-x |- pareto-entry);           % fork at entry y
+\coordinate (rq-bottom) at (rq-x |- final.south);
+% trunk: final → down → centre column → vertical up (no arrowhead)
+\draw[thick, color=finalteal, densely dotted]
+    (final.south) -- ++(0,-0.8) -| (rq-bottom);
+\draw[thick, color=finalteal, densely dotted]
+    (rq-bottom) -- (rq-s1);
+\node[labelbox, left=2pt] at ([yshift=0.6cm]rq-bottom) {\footnotesize re-query};
+% split → Stage-1 RAG Engine (perfectly horizontal)
+\draw[arr=finalteal, densely dotted]
+    (rq-s1) -- (rag1-entry);
+% split → Stage-2 RAG Engine (perfectly horizontal)
+\draw[arr=finalteal, densely dotted]
+    (rq-s2) -- (pareto-entry);
+
+% ════════════════════════════════════════════════════════════
+%  BACKGROUND BOXES
+% ════════════════════════════════════════════════════════════
+\begin{scope}[on background layer]
+    % Offline pipeline
+    \node[fit=(raw)(emb)(vdb),
+          fill=vdbpurple!4, draw=vdbpurple!20, dashed, rounded corners=8pt,
+          inner sep=14pt,
+          label={[font=\sffamily\bfseries\scriptsize,
+          text=vdbpurple]below:OFFLINE \textemdash\ Knowledge-Base Construction}] {};
+    % Stage-1
+    \node[fit=(s1label)(user1)(rag1)(ranked),
+          fill=srcblue!4, draw=srcblue!25, dashed, rounded corners=8pt,
+          inner sep=14pt] {};
+    % Stage-2 (includes verification + decision row)
+    \node[fit=(s2label)(user2)(pareto)(verif)(dec)(adjust)(optimal),
+          fill=paretored!4, draw=paretored!20, dashed, rounded corners=8pt,
+          inner sep=14pt] {};
+\end{scope}
+
+\end{tikzpicture}
+\end{document}

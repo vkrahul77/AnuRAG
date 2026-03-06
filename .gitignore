@@ -1,0 +1,53 @@
+# ── Secrets ──
+.env
+.env.local
+
+# ── Python ──
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+venv/
+ENV/
+env/
+.venv/
+
+# ── IDE ──
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# ── Build ──
+build/
+dist/
+*.egg-info/
+
+# ── Database & generated data (large, user-specific) ──
+*.pkl
+*.pickle
+gemini/finalAgent_db/base_db/
+gemini/finalAgent_db/images/
+gemini/finalAgent_db/*.json
+
+# ── LUT files (large) ──
+*.mat
+
+# ── Logs ──
+*.log
+logs/
+
+# ── OS ──
+.DS_Store
+Thumbs.db
+
+# ── Jupyter ──
+.ipynb_checkpoints/
+
+# ── Output ──
+output_images/
+figures/
+gemini/tools/output_images/
+gemini/tools/output_py/
+gemini/tools/contextualize_demo.png

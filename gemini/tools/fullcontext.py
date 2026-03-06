@@ -1,5 +1,5 @@
 """
-MuaLLM-Gemini: Full Context Module
+AnuRAG: Full Context Module
 Uses the full content of the PDF to answer questions using Google Gemini
 Uses the new google-genai package (REST API) for better firewall compatibility
 """

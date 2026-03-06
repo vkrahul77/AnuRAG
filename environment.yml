@@ -1,4 +1,4 @@
-name: muallm-gemini
+name: anurag
 channels:
   - conda-forge
   - defaults

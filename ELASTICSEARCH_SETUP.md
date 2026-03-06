@@ -1,47 +1,47 @@
-# Elasticsearch Setup Guide for MuaLLM-Gemini
+# Elasticsearch Setup Guide for AnuRAG
 
 ## Why Elasticsearch?
 
-The hybrid search in MuaLLM-Gemini combines:
+The hybrid search in AnuRAG combines:
 1. **Semantic Search** (Gemini embeddings) - Finds conceptually similar content
 2. **BM25 Search** (Elasticsearch) - Finds exact keyword matches
 
 **Together they provide 10-20% better retrieval accuracy** than either alone!
 
 ```
-┌─────────────────────────────────────────────────────────────┐
-│                      Your Query                              │
-│         "low power bandgap reference circuit"                │
-└─────────────────────────┬───────────────────────────────────┘
-                          │
-          ┌───────────────┴───────────────┐
-          ▼                               ▼
-┌─────────────────────┐       ┌─────────────────────────┐
-│  Semantic Search    │       │  BM25 Search            │
-│  (Gemini Embeddings)│       │  (Elasticsearch)        │
-│                     │       │                         │
-│  Finds: "voltage    │       │  Finds: exact match     │
-│  reference with     │       │  "bandgap reference"    │
-│  minimal power"     │       │  "low power"            │
-└─────────┬───────────┘       └───────────┬─────────────┘
-          │                               │
-          └───────────────┬───────────────┘
-                          ▼
-              ┌─────────────────────────┐
-              │   Reciprocal Rank       │
-              │   Fusion (RRF)          │
-              │   Combines both scores  │
-              └───────────┬─────────────┘
-                          ▼
-              ┌─────────────────────────┐
-              │   Cohere Reranking      │
-              │   (Optional)            │
-              └───────────┬─────────────┘
-                          ▼
-              ┌─────────────────────────┐
-              │   Top 10 Results        │
-              │   Best of both worlds!  │
-              └─────────────────────────┘
+â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+â”‚                      Your Query                              â”‚
+â”‚         "low power bandgap reference circuit"                â”‚
+â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
+                          â”‚
+          â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”´â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+          â–¼                               â–¼
+â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”       â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+â”‚  Semantic Search    â”‚       â”‚  BM25 Search            â”‚
+â”‚  (Gemini Embeddings)â”‚       â”‚  (Elasticsearch)        â”‚
+â”‚                     â”‚       â”‚                         â”‚
+â”‚  Finds: "voltage    â”‚       â”‚  Finds: exact match     â”‚
+â”‚  reference with     â”‚       â”‚  "bandgap reference"    â”‚
+â”‚  minimal power"     â”‚       â”‚  "low power"            â”‚
+â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜       â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
+          â”‚                               â”‚
+          â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
+                          â–¼
+              â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+              â”‚   Reciprocal Rank       â”‚
+              â”‚   Fusion (RRF)          â”‚
+              â”‚   Combines both scores  â”‚
+              â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
+                          â–¼
+              â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+              â”‚   Cohere Reranking      â”‚
+              â”‚   (Optional)            â”‚
+              â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
+                          â–¼
+              â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+              â”‚   Top 10 Results        â”‚
+              â”‚   Best of both worlds!  â”‚
+              â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
 ```
 
 ---
@@ -125,7 +125,7 @@ cd C:\elasticsearch\bin
 elasticsearch.bat
 ```
 
-Keep this terminal open while using MuaLLM-Gemini.
+Keep this terminal open while using AnuRAG.
 
 ### Step 4: Verify
 Open browser: http://localhost:9200
@@ -149,23 +149,23 @@ echo "xpack.security.enabled: false" >> config/elasticsearch.yml
 
 ---
 
-## Verifying Elasticsearch Works with MuaLLM-Gemini
+## Verifying Elasticsearch Works with AnuRAG
 
 After starting Elasticsearch, test the integration:
 
 ```bash
-cd C:\Users\VikasKumar\Documents\github_repos\MuaLLM-Gemini\gemini\tools
+cd gemini/tools
 
 python -c "
 from elasticsearch import Elasticsearch
 
 es = Elasticsearch('http://localhost:9200')
 if es.ping():
-    print('✅ Elasticsearch is connected!')
+    print('âœ… Elasticsearch is connected!')
     info = es.info()
     print(f'   Version: {info[\"version\"][\"number\"]}')
 else:
-    print('❌ Cannot connect to Elasticsearch')
+    print('âŒ Cannot connect to Elasticsearch')
 "
 ```
 
@@ -176,7 +176,7 @@ else:
 Once Elasticsearch is running, rebuild your database to index documents:
 
 ```bash
-cd C:\Users\VikasKumar\Documents\github_repos\MuaLLM-Gemini\gemini\tools
+cd gemini/tools
 
 # This will automatically create Elasticsearch indices
 python main.py --build_db
@@ -264,4 +264,4 @@ curl http://localhost:9200/_cluster/health
 2. **Run**: `docker run -d --name elasticsearch -p 9200:9200 -e "discovery.type=single-node" -e "xpack.security.enabled=false" elasticsearch:8.11.0`
 3. **Verify**: http://localhost:9200
 4. **Rebuild DB**: `python main.py --build_db`
-5. **Enjoy hybrid search!** 🎉
+5. **Enjoy hybrid search!** ðŸŽ‰

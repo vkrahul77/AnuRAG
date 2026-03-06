@@ -1,5 +1,5 @@
 """
-MuaLLM-Gemini: Title Loader Module
+AnuRAG: Title Loader Module
 Loads and manages paper titles from the database
 """
 

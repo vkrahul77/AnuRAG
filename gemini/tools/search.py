@@ -1,5 +1,5 @@
 """
-MuaLLM-Gemini: Hybrid Search Module
+AnuRAG: Hybrid Search Module
 Implements contextual retrieval with semantic search and BM25 using Google Gemini
 Uses the new google-genai package (REST API) for better firewall compatibility
 """
@@ -90,7 +90,7 @@ from fullcontext import main as fullcontext
 class ContextualVectorDB:
     """
     Contextual Vector Database using Google Gemini for embeddings and contextualization.
-    Implements the contextual retrieval approach from the MuaLLM paper.
+    Implements the contextual retrieval approach from the AnuRAG paper.
     
     Supports two embedding modes:
     1. Gemini API (gemini-embedding-001) - High quality, but rate limited
@@ -120,10 +120,10 @@ class ContextualVectorDB:
         self.local_model = None
         
         if self.use_local_embeddings:
-            print("🚀 Using LOCAL embeddings (sentence-transformers) - FREE & FAST!")
+            print("ðŸš€ Using LOCAL embeddings (sentence-transformers) - FREE & FAST!")
             self._load_local_model()
         else:
-            print("☁️  Using Gemini API embeddings (may hit rate limits)")
+            print("â˜ï¸  Using Gemini API embeddings (may hit rate limits)")
     
     def _load_local_model(self):
         """Load the local embedding model."""
@@ -131,7 +131,7 @@ class ContextualVectorDB:
         if local_embedding_model is None:
             print("Loading local embedding model (all-MiniLM-L6-v2)...")
             local_embedding_model = SentenceTransformer('all-MiniLM-L6-v2')
-            print("✅ Local model loaded!")
+            print("âœ… Local model loaded!")
         self.local_model = local_embedding_model
 
     @retry(
@@ -193,7 +193,7 @@ class ContextualVectorDB:
         except Exception as e:
             err_str = str(e).lower()
             if "rate" in err_str or "quota" in err_str or "429" in str(e) or "resource_exhausted" in err_str or "getaddrinfo" in err_str:
-                # Don't sleep here — let tenacity @retry handle backoff timing
+                # Don't sleep here â€” let tenacity @retry handle backoff timing
                 raise
             raise
 
@@ -276,7 +276,7 @@ class ContextualVectorDB:
         except Exception as e:
             err_str = str(e).lower()
             if "rate" in err_str or "quota" in err_str or "429" in str(e) or "resource_exhausted" in err_str or "getaddrinfo" in err_str:
-                # Don't sleep here — let tenacity @retry handle backoff timing
+                # Don't sleep here â€” let tenacity @retry handle backoff timing
                 raise  # Let @retry handle it
             print(f"Error processing image: {str(e)}")
             return f"Error processing image: {str(e)}", None
@@ -414,17 +414,17 @@ class ContextualVectorDB:
                     except Exception as e:
                         err_str = str(e)
                         if "429" in err_str or "RESOURCE_EXHAUSTED" in err_str:
-                            # Rate limited — wait and retry once
-                            print(f"  ⏳ Rate limit at chunk {idx}, waiting 60s...")
+                            # Rate limited â€” wait and retry once
+                            print(f"  â³ Rate limit at chunk {idx}, waiting 60s...")
                             time.sleep(60)
                             try:
                                 context_summary, _ = self.situate_text_context(doc_text, chunk_text)
                                 contextualized = f"{context_summary}\n\n{chunk_text}"
                             except Exception as e2:
-                                print(f"  ⚠️ Retry failed for chunk {idx}: {e2}")
+                                print(f"  âš ï¸ Retry failed for chunk {idx}: {e2}")
                                 contextualized = chunk_text
                         else:
-                            print(f"  ⚠️ Context failed for chunk {idx}, using raw: {e}")
+                            print(f"  âš ï¸ Context failed for chunk {idx}, using raw: {e}")
                             contextualized = chunk_text
                     
                     return {
@@ -451,7 +451,7 @@ class ContextualVectorDB:
                         else:
                             contextualized = f"Image from paper: {title}. Path: {image_path}"
                     except Exception as e:
-                        print(f"  ⚠️ Image context failed for {image_path}: {e}")
+                        print(f"  âš ï¸ Image context failed for {image_path}: {e}")
                         contextualized = f"Image from paper: {title}. Path: {image_path}"
                     
                     return {
@@ -467,7 +467,7 @@ class ContextualVectorDB:
                 print(f"Error processing item {idx}: {e}")
                 return None
 
-        # ── Prepare all items ──
+        # â”€â”€ Prepare all items â”€â”€
         all_items = []
         for doc in dataset:
             for chunk in doc.get("chunks", []):
@@ -481,10 +481,10 @@ class ContextualVectorDB:
         metadata = []
         
         if contextualize:
-            # ── CONTEXTUAL MODE: LLM generates a summary for each chunk ──
-            print(f"🧠 Contextual mode ENABLED (using model: {GEMINI_CONTEXT_MODEL})")
+            # â”€â”€ CONTEXTUAL MODE: LLM generates a summary for each chunk â”€â”€
+            print(f"ðŸ§  Contextual mode ENABLED (using model: {GEMINI_CONTEXT_MODEL})")
             if text_only:
-                print(f"   📝 Text-only mode: images will use filename-based descriptions")
+                print(f"   ðŸ“ Text-only mode: images will use filename-based descriptions")
             
             # Separate delays for text and image calls
             text_delay = API_DELAY       # From config, default 4.0s
@@ -509,9 +509,9 @@ class ContextualVectorDB:
                     texts_to_embed = checkpoint.get('texts', [])
                     metadata = checkpoint.get('metadata', [])
                     start_idx = len(texts_to_embed)
-                    print(f"📂 Resuming from checkpoint: {start_idx}/{len(all_items)} done")
+                    print(f"ðŸ“‚ Resuming from checkpoint: {start_idx}/{len(all_items)} done")
                 except Exception as e:
-                    print(f"⚠️ Could not load checkpoint: {e}, starting fresh")
+                    print(f"âš ï¸ Could not load checkpoint: {e}, starting fresh")
             
             # Estimate remaining time
             remaining = len(all_items) - start_idx
@@ -529,11 +529,11 @@ class ContextualVectorDB:
                 if is_image and not text_only:
                     if image_skip_mode:
                         if time.time() < image_skip_until:
-                            # Still in skip window — use simple processing
+                            # Still in skip window â€” use simple processing
                             skip_this_image = True
                         else:
-                            # Cooldown expired — try one image to probe quota
-                            tqdm.write(f"  🔄 Probing image API (skip cooldown expired)...")
+                            # Cooldown expired â€” try one image to probe quota
+                            tqdm.write(f"  ðŸ”„ Probing image API (skip cooldown expired)...")
                             image_skip_mode = False
                 
                 # In text_only mode OR image-skip mode, use simple processing for images
@@ -558,25 +558,25 @@ class ContextualVectorDB:
                         image_delay = min(max_delay, image_delay * 1.5)
                         
                         if image_fail_streak >= IMAGE_FAIL_THRESHOLD:
-                            # Daily quota likely exhausted — stop wasting time on images
+                            # Daily quota likely exhausted â€” stop wasting time on images
                             image_skip_mode = True
                             image_skip_until = time.time() + IMAGE_SKIP_DURATION
-                            tqdm.write(f"  🚫 {image_fail_streak} consecutive image 429s — "
+                            tqdm.write(f"  ðŸš« {image_fail_streak} consecutive image 429s â€” "
                                        f"skipping images for {IMAGE_SKIP_DURATION//60} min "
                                        f"(total skipped: {total_images_skipped})")
                         else:
-                            tqdm.write(f"  ⚠️ Image fail #{image_fail_streak}, "
+                            tqdm.write(f"  âš ï¸ Image fail #{image_fail_streak}, "
                                        f"image delay now {image_delay:.1f}s")
                             time.sleep(image_delay)
                     elif is_image and not text_only and not skip_this_image:
                         # Image succeeded! Reset image failure tracking
                         if image_fail_streak > 0:
-                            tqdm.write(f"  ✅ Image API recovered! Resetting fail streak.")
+                            tqdm.write(f"  âœ… Image API recovered! Resetting fail streak.")
                         image_fail_streak = 0
                         image_delay = max(min_delay, image_delay * 0.8)
                     
                     if not is_image:
-                        # Text chunk succeeded — track text streak separately
+                        # Text chunk succeeded â€” track text streak separately
                         text_success_streak += 1
                 
                 # Rate limiting for API calls (skip for simple-processed items)
@@ -589,7 +589,7 @@ class ContextualVectorDB:
                         if text_success_streak > 50 and text_delay > min_delay:
                             text_delay = max(min_delay, text_delay * 0.95)
                             if text_success_streak % 200 == 0:
-                                tqdm.write(f"  ✨ Text delay → {text_delay:.2f}s (streak: {text_success_streak})")
+                                tqdm.write(f"  âœ¨ Text delay â†’ {text_delay:.2f}s (streak: {text_success_streak})")
                 
                 # Save checkpoint every 50 items (more frequent for long runs)
                 if (i + 1) % 50 == 0:
@@ -597,7 +597,7 @@ class ContextualVectorDB:
                     os.makedirs(os.path.dirname(CONTEXT_CHECKPOINT_PATH), exist_ok=True)
                     with open(CONTEXT_CHECKPOINT_PATH, 'w', encoding='utf-8') as f:
                         json.dump(checkpoint, f)
-                    tqdm.write(f"  ✅ Checkpoint saved: {len(texts_to_embed)}/{len(all_items)} "
+                    tqdm.write(f"  âœ… Checkpoint saved: {len(texts_to_embed)}/{len(all_items)} "
                                f"(text_delay={text_delay:.2f}s, img_skip={image_skip_mode}, "
                                f"img_skipped={total_images_skipped})")
             
@@ -606,10 +606,10 @@ class ContextualVectorDB:
             os.makedirs(os.path.dirname(CONTEXT_CHECKPOINT_PATH), exist_ok=True)
             with open(CONTEXT_CHECKPOINT_PATH, 'w', encoding='utf-8') as f:
                 json.dump(checkpoint, f)
-            print(f"\n✅ Contextualization complete! {len(texts_to_embed)} items processed.")
+            print(f"\nâœ… Contextualization complete! {len(texts_to_embed)} items processed.")
         else:
-            # ── FAST MODE: no API calls, just raw chunk content ──
-            print("⚡ Fast mode (no contextualization API calls)...")
+            # â”€â”€ FAST MODE: no API calls, just raw chunk content â”€â”€
+            print("âš¡ Fast mode (no contextualization API calls)...")
             for i, item in enumerate(tqdm(all_items, desc="Processing")):
                 result = process_item_simple(item)
                 if result:
@@ -622,7 +622,7 @@ class ContextualVectorDB:
         self._embed_and_store_optimized(texts_to_embed, metadata)
         self.save_db()
         
-        print(f"\n✅ Vector database loaded. Total items: {len(texts_to_embed)}")
+        print(f"\nâœ… Vector database loaded. Total items: {len(texts_to_embed)}")
 
     def _embed_and_store_optimized(self, texts: List[str], data: List[Dict[str, Any]]):
         """Generate embeddings with optimized batching and rate limiting."""
@@ -637,13 +637,13 @@ class ContextualVectorDB:
                     existing_data = pickle.load(f)
                 existing_count = len(existing_data.get("embeddings", []))
                 if existing_count > 0 and existing_count < len(texts):
-                    print(f"📂 Found checkpoint with {existing_count}/{len(texts)} embeddings")
-                    print(f"▶️  Resuming from index {existing_count}...")
+                    print(f"ðŸ“‚ Found checkpoint with {existing_count}/{len(texts)} embeddings")
+                    print(f"â–¶ï¸  Resuming from index {existing_count}...")
                     # Load existing embeddings
                     embeddings = existing_data.get("embeddings", [])
                     start_index = existing_count
                 elif existing_count >= len(texts):
-                    print(f"✅ All {existing_count} embeddings already exist. Skipping.")
+                    print(f"âœ… All {existing_count} embeddings already exist. Skipping.")
                     self.embeddings = existing_data.get("embeddings", [])
                     self.metadata = existing_data.get("metadata", [])
                     return
@@ -653,11 +653,11 @@ class ContextualVectorDB:
         # Use larger batches for local embeddings (no rate limits!)
         if self.use_local_embeddings and self.local_model:
             batch_size = 500  # Local model can handle large batches
-            print(f"🚀 Creating embeddings for {len(texts) - start_index} texts using LOCAL model (FREE & FAST)...")
+            print(f"ðŸš€ Creating embeddings for {len(texts) - start_index} texts using LOCAL model (FREE & FAST)...")
         else:
             batch_size = 20  # Reduced batch size for Gemini free tier
             print(f"Creating embeddings for {len(texts) - start_index} texts using Gemini API...")
-            print("⚠️  Using rate-limited mode for free tier (15 RPM limit)")
+            print("âš ï¸  Using rate-limited mode for free tier (15 RPM limit)")
         
         failed_indices = []
         
@@ -685,7 +685,7 @@ class ContextualVectorDB:
                     error_str = str(e)
                     if "429" in error_str or "RESOURCE_EXHAUSTED" in error_str:
                         delay = base_delay * (2 ** attempt)  # Exponential backoff
-                        print(f"⏳ Rate limit hit. Waiting {delay}s before retry {attempt + 1}/{max_retries}...")
+                        print(f"â³ Rate limit hit. Waiting {delay}s before retry {attempt + 1}/{max_retries}...")
                         time.sleep(delay)
                     else:
                         print(f"Error in batch: {e}")
@@ -702,7 +702,7 @@ class ContextualVectorDB:
                         break
             else:
                 # All retries failed, use placeholder embeddings
-                print(f"⚠️ Batch {batch_num} failed after {max_retries} retries. Using placeholders.")
+                print(f"âš ï¸ Batch {batch_num} failed after {max_retries} retries. Using placeholders.")
                 for _ in batch_texts:
                     embeddings.append([0] * 768)
                     failed_indices.append(len(embeddings) - 1)
@@ -719,8 +719,8 @@ class ContextualVectorDB:
         self.metadata = data
         
         if failed_indices:
-            print(f"⚠️ {len(failed_indices)} embeddings failed and use placeholders")
-        print(f"✅ Embeddings created successfully! Total: {len(embeddings)}")
+            print(f"âš ï¸ {len(failed_indices)} embeddings failed and use placeholders")
+        print(f"âœ… Embeddings created successfully! Total: {len(embeddings)}")
     
     def get_embeddings_batch(self, texts: List[str]) -> List[List[float]]:
         """Get embeddings for multiple texts in a single API call."""
@@ -768,7 +768,7 @@ class ContextualVectorDB:
         os.makedirs(os.path.dirname(self.db_path), exist_ok=True)
         with open(self.db_path, "wb") as f:
             pickle.dump(data, f)
-        print(f"✅ Checkpoint saved: {len(embeddings)} embeddings")
+        print(f"âœ… Checkpoint saved: {len(embeddings)} embeddings")
 
     def save_db(self):
         """Save the database to disk (overwrites existing data)."""
@@ -852,7 +852,7 @@ class ElasticSearchBM25:
                 retry_on_timeout=False
             )
         except Exception as init_error:
-            print(f"⚠️ ES init error: {init_error}")
+            print(f"âš ï¸ ES init error: {init_error}")
             raise ConnectionError(f"Cannot initialize Elasticsearch client: {init_error}")
             
         self.index_name = name
@@ -860,7 +860,7 @@ class ElasticSearchBM25:
         # Quick health check - fail fast if ES is not running
         try:
             info = self.es_client.info()
-            print(f"✅ Connected to Elasticsearch {info['version']['number']}")
+            print(f"âœ… Connected to Elasticsearch {info['version']['number']}")
         except Exception as e:
             raise ConnectionError(f"Cannot connect to Elasticsearch: {e}")
         
@@ -980,21 +980,21 @@ def create_elasticsearch_bm25_index(db: ContextualVectorDB) -> Optional[ElasticS
     Falls back gracefully to vector-only search.
     """
     if not ES_AVAILABLE:
-        print("ℹ️ Elasticsearch not installed. Using vector search only.")
+        print("â„¹ï¸ Elasticsearch not installed. Using vector search only.")
         return None
     
     try:
         es_bm25 = ElasticSearchBM25(timeout=5)  # 5 second timeout
         es_bm25.index_documents(db.metadata)
-        print("✅ Elasticsearch connected successfully.")
+        print("âœ… Elasticsearch connected successfully.")
         return es_bm25
     except ConnectionError as e:
-        print(f"⚠️ Elasticsearch offline: {e}")
-        print("ℹ️ Continuing with vector search only (no BM25 hybrid search).")
+        print(f"âš ï¸ Elasticsearch offline: {e}")
+        print("â„¹ï¸ Continuing with vector search only (no BM25 hybrid search).")
         return None
     except Exception as e:
-        print(f"⚠️ Elasticsearch error: {e}")
-        print("ℹ️ Continuing with vector search only.")
+        print(f"âš ï¸ Elasticsearch error: {e}")
+        print("â„¹ï¸ Continuing with vector search only.")
         return None
 
 
@@ -1273,7 +1273,7 @@ def main(query: str = None, load_data: bool = False, contextualize: bool = False
                 for r in raw_results
             ]
         
-        # Build doc_id → paper title mapping from documents.json
+        # Build doc_id â†’ paper title mapping from documents.json
         doc_title_map = {}
         try:
             docs_path = os.path.join(os.path.dirname(__file__), '..', 'finalAgent_db', 'documents.json')
@@ -1344,7 +1344,7 @@ def main(query: str = None, load_data: bool = False, contextualize: bool = False
 
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description="Search the MuaLLM-Gemini vector database")
+    parser = argparse.ArgumentParser(description="Search the AnuRAG vector database")
     parser.add_argument("--load_data", action="store_true", 
                         help="Load data from documents.json and create vector database")
     parser.add_argument("--contextualize", action="store_true",

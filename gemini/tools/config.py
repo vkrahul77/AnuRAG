@@ -1,5 +1,5 @@
 """
-MuaLLM-Gemini: Configuration Module
+AnuRAG: Configuration Module
 Centralized configuration for all model settings.
 
 Change the model here to affect the entire system!
@@ -33,7 +33,7 @@ GEMINI_CHAT_MODEL = os.getenv("GEMINI_CHAT_MODEL", "gemini-2.0-flash")
 # Embedding model (for vector search)
 # Options:
 #   - "gemini-embedding-001"     (current, 3072 native / 768 with output_dimensionality)
-#   - "text-embedding-004"      (DEPRECATED — removed from API Feb 2026)
+#   - "text-embedding-004"      (DEPRECATED â€” removed from API Feb 2026)
 GEMINI_EMBEDDING_MODEL = os.getenv("GEMINI_EMBEDDING_MODEL", "gemini-embedding-001")
 
 # Vision model (for image analysis)
@@ -41,7 +41,7 @@ GEMINI_EMBEDDING_MODEL = os.getenv("GEMINI_EMBEDDING_MODEL", "gemini-embedding-0
 GEMINI_VISION_MODEL = os.getenv("GEMINI_VISION_MODEL", "gemini-2.0-flash")
 
 # Contextualization model (for offline chunk contextualization)
-# Use a cheap/fast model — this is a one-time offline pass over all chunks.
+# Use a cheap/fast model â€” this is a one-time offline pass over all chunks.
 # gemini-2.0-flash is recommended: cheap, fast, sufficient for one-line summaries.
 GEMINI_CONTEXT_MODEL = os.getenv("GEMINI_CONTEXT_MODEL", "gemini-2.0-flash")
 
@@ -247,7 +247,7 @@ def get_lut_info(nmos_path: str = None, pmos_path: str = None) -> str:
     info_lines.append("    n.lookup('STH_W',  GM_ID=gm_id, L=L)   # Thermal noise PSD density")
     info_lines.append("    n.lookup('SFL_W',  GM_ID=gm_id, L=L)   # Flicker noise PSD density")
     info_lines.append("")
-    info_lines.append("  INVALID lookups (DO NOT USE — will error or return empty):")
+    info_lines.append("  INVALID lookups (DO NOT USE â€” will error or return empty):")
     info_lines.append("    n.lookup('VDSAT', ...)  # NOT in LUT. Use VDSsat = 2/(gm/ID) instead")
     info_lines.append("    n.lookup('VT', ...)     # NOT available at all L values")
     info_lines.append("    n.lookup('FUG', ...)    # NOT available at all L values")
@@ -255,7 +255,7 @@ def get_lut_info(nmos_path: str = None, pmos_path: str = None) -> str:
     info_lines.append("")
     info_lines.append("  IMPORTANT UNITS:")
     info_lines.append("    - L is in MICRONS (e.g., L=0.13, L=0.5, L=1.0)")
-    info_lines.append("    - W from lookup is in meters → multiply by 1e6 for display in µm")
+    info_lines.append("    - W from lookup is in meters â†’ multiply by 1e6 for display in Âµm")
     info_lines.append("    - VDSsat = 2*ID/gm = 2/(gm/ID)  [strong-inversion square-law approx]")
     
     return "\n".join(info_lines)

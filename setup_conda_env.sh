@@ -1,8 +1,8 @@
 #!/bin/bash
-# MuaLLM-Gemini Setup Script for Linux/Mac
+# AnuRAG Setup Script for Linux/Mac
 
 echo "============================================================"
-echo "MuaLLM-Gemini Environment Setup"
+echo "AnuRAG Environment Setup"
 echo "============================================================"
 
 # Check if conda is available
@@ -14,14 +14,14 @@ fi
 
 # Create conda environment
 echo ""
-echo "Creating conda environment 'muallm-gemini'..."
-conda create -n muallm-gemini python=3.11 -y
+echo "Creating conda environment 'anurag'..."
+conda create -n anurag python=3.11 -y
 
 # Activate environment
 echo ""
 echo "Activating environment..."
 source $(conda info --base)/etc/profile.d/conda.sh
-conda activate muallm-gemini
+conda activate anurag
 
 # Install PyTorch
 echo ""
@@ -47,6 +47,6 @@ echo "============================================================"
 echo ""
 echo "Next steps:"
 echo "1. Create a .env file with your GOOGLE_API_KEY"
-echo "2. Run: conda activate muallm-gemini"
+echo "2. Run: conda activate anurag"
 echo "3. cd gemini/tools"
 echo "4. python main.py --help"

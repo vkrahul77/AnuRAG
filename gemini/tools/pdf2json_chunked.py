@@ -1,5 +1,5 @@
 """
-MuaLLM-Gemini: PDF Processing Module
+AnuRAG: PDF Processing Module
 Extracts text, images, equations, and tables from research papers
 """
 
@@ -272,7 +272,7 @@ async def main(pdf_files: List[str],
                output_path: str = "../finalAgent_db/documents.json", 
                image_dir: str = "../finalAgent_db/images"):
     """
-    Process PDF files into JSON format for the MuaLLM system.
+    Process PDF files into JSON format for the AnuRAG system.
     
     Args:
         pdf_files: List of PDF file paths to process
@@ -330,9 +330,9 @@ async def main(pdf_files: List[str],
                 )
                 new_documents.append(document)
                 current_start_number += num_images
-                print(f"✓ Processed: {os.path.basename(pdf_file)} - {len(document['chunks'])} chunks, {len(document['images'])} images")
+                print(f"âœ“ Processed: {os.path.basename(pdf_file)} - {len(document['chunks'])} chunks, {len(document['images'])} images")
             except Exception as e:
-                print(f"✗ Error processing {pdf_file}: {e}")
+                print(f"âœ— Error processing {pdf_file}: {e}")
                 
             progress.update(pdf_task, advance=1)
             progress.remove_task(process_task)
@@ -354,7 +354,7 @@ async def main(pdf_files: List[str],
 
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description='Process PDF files into JSON format for MuaLLM-Gemini')
+    parser = argparse.ArgumentParser(description='Process PDF files into JSON format for AnuRAG')
     parser.add_argument('--paper_path', type=str, required=True,
                         help='Path to PDF file or directory containing PDF files')
     parser.add_argument('--output_path', type=str, default="../finalAgent_db/documents.json",

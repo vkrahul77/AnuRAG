@@ -1,5 +1,5 @@
 """
-MuaLLM: LLM Provider Abstraction Layer
+AnuRAG: LLM Provider Abstraction Layer
 Allows seamless switching between Gemini and Claude (Anthropic) for chat/reasoning.
 
 The vector database, embeddings, and search are INDEPENDENT of this module.
@@ -333,17 +333,17 @@ class ClaudeProvider(LLMProvider):
     
     Recommended models for analog IC design (highly intelligent reasoning):
     
-    ┌─────────────────────────┬──────────┬──────────┬─────────────────────────┐
-    │ Model                   │ Input/1M │ Output/1M│ Best For                │
-    ├─────────────────────────┼──────────┼──────────┼─────────────────────────┤
-    │ claude-opus-4-20250514  │  $15.00  │  $75.00  │ Maximum reasoning power │
-    │ claude-sonnet-4-20250514│   $3.00  │  $15.00  │ Best cost/intelligence  │
-    │ claude-3-5-haiku-latest │   $0.80  │   $4.00  │ Fast, cheaper tasks     │
-    └─────────────────────────┴──────────┴──────────┴─────────────────────────┘
+    â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+    â”‚ Model                   â”‚ Input/1M â”‚ Output/1Mâ”‚ Best For                â”‚
+    â”œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¼â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¼â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¼â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¤
+    â”‚ claude-opus-4-20250514  â”‚  $15.00  â”‚  $75.00  â”‚ Maximum reasoning power â”‚
+    â”‚ claude-sonnet-4-20250514â”‚   $3.00  â”‚  $15.00  â”‚ Best cost/intelligence  â”‚
+    â”‚ claude-3-5-haiku-latest â”‚   $0.80  â”‚   $4.00  â”‚ Fast, cheaper tasks     â”‚
+    â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”´â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”´â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”´â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
     
     For AnuRAG's analog IC design tasks (physics reasoning + code generation):
-    → claude-sonnet-4-20250514 is the recommended sweet spot.
-    → claude-opus-4-20250514 for maximum quality on complex topology analysis.
+    â†’ claude-sonnet-4-20250514 is the recommended sweet spot.
+    â†’ claude-opus-4-20250514 for maximum quality on complex topology analysis.
     """
 
     def __init__(self, model: str = None):
@@ -511,7 +511,7 @@ class ClaudeProvider(LLMProvider):
                     role = "assistant"
                 messages.append({"role": role, "content": content})
             elif hasattr(item, 'role') and hasattr(item, 'parts'):
-                # Gemini Content objects — convert
+                # Gemini Content objects â€” convert
                 role = "assistant" if item.role == "model" else item.role
                 text_parts = []
                 for part in (item.parts or []):
@@ -536,7 +536,7 @@ class ClaudeProvider(LLMProvider):
         for block in response.content:
             if block.type == "text":
                 text_parts.append(block.text)
-            # Skip "thinking" blocks — those are internal reasoning
+            # Skip "thinking" blocks â€” those are internal reasoning
         return "\n".join(text_parts) if text_parts else "Error: Empty response from Claude"
 
 
@@ -570,10 +570,10 @@ def get_llm_provider(force_provider: str = None, force_model: str = None) -> LLM
 
     if provider_name == "claude" or provider_name == "anthropic":
         _provider_instance = ClaudeProvider(model=force_model)
-        print(f"🤖 LLM Provider: Claude ({_provider_instance.model_name()})")
+        print(f"ðŸ¤– LLM Provider: Claude ({_provider_instance.model_name()})")
     elif provider_name == "gemini" or provider_name == "google":
         _provider_instance = GeminiProvider(model=force_model)
-        print(f"🤖 LLM Provider: Gemini ({_provider_instance.model_name()})")
+        print(f"ðŸ¤– LLM Provider: Gemini ({_provider_instance.model_name()})")
     else:
         raise ValueError(
             f"Unknown LLM provider: '{provider_name}'. "

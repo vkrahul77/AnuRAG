@@ -1,5 +1,5 @@
 """
-MuaLLM-Gemini: Web Scraper Module
+AnuRAG: Web Scraper Module
 Utility for scraping additional resources from the web
 """
 
@@ -149,7 +149,7 @@ def main(query: str) -> Dict[str, Any]:
 if __name__ == "__main__":
     import argparse
     
-    parser = argparse.ArgumentParser(description='Web scraper for MuaLLM-Gemini')
+    parser = argparse.ArgumentParser(description='Web scraper for AnuRAG')
     parser.add_argument('--url', type=str, help='URL to scrape')
     parser.add_argument('--search', type=str, help='arXiv search query')
     

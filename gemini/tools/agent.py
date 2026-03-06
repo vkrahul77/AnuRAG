@@ -1,5 +1,5 @@
 """
-MuaLLM: Agent Module
+AnuRAG: Agent Module
 ReAct-style agent for multimodal reasoning about analog circuits
 Supports Gemini and Claude via the LLM provider abstraction.
 """
@@ -27,7 +27,7 @@ from messages import system_message
 from search import main as search_db
 from load_titles import load_titles
 
-# Cost estimation — use config-driven costs
+# Cost estimation â€” use config-driven costs
 def calculate_cost(input_tokens: int, output_tokens: int) -> Dict[str, float]:
     """Calculate estimated cost based on token usage and active model."""
     costs = get_model_costs()
@@ -303,7 +303,7 @@ def query(question: str, max_turns: int = 10) -> Dict[str, Any]:
 def interactive_mode():
     """Run the agent in interactive mode."""
     print("\n" + "="*60)
-    print("MuaLLM-Gemini Interactive Mode")
+    print("AnuRAG Interactive Mode")
     print("Type 'quit' or 'exit' to stop")
     print("="*60 + "\n")
     
@@ -339,7 +339,7 @@ def interactive_mode():
 if __name__ == "__main__":
     import argparse
     
-    parser = argparse.ArgumentParser(description='MuaLLM-Gemini Agent')
+    parser = argparse.ArgumentParser(description='AnuRAG Agent')
     parser.add_argument('--query', type=str, help='Single query to execute')
     parser.add_argument('--interactive', action='store_true', help='Run in interactive mode')
     

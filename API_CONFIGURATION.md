@@ -1,4 +1,4 @@
-# MuaLLM-Gemini API Configuration Guide
+# AnuRAG API Configuration Guide
 
 ## Google Gemini API
 

@@ -1,6 +1,6 @@
-# MuaLLM-Gemini Quick Start Guide
+# AnuRAG Quick Start Guide
 
-## 🚀 5-Minute Setup
+## ðŸš€ 5-Minute Setup
 
 ### Step 1: Get Your Gemini API Key
 
@@ -10,7 +10,7 @@
 
 ### Step 2: Create Environment File
 
-Create a file named `.env` in the `MuaLLM-Gemini` folder:
+Create a file named `.env` in the `AnuRAG` folder:
 
 ```
 GOOGLE_API_KEY=paste_your_key_here
@@ -18,7 +18,7 @@ GOOGLE_API_KEY=paste_your_key_here
 
 ### Step 3: Install Dependencies
 
-Open a terminal in the `MuaLLM-Gemini` folder:
+Open a terminal in the `AnuRAG` folder:
 
 ```bash
 # Create virtual environment
@@ -36,7 +36,7 @@ pip install -r requirements.txt
 cd gemini\tools
 
 # Process papers from the Filtered_01_06 folder
-python main.py --process_papers "C:\Users\VikasKumar\Documents\github_repos\Filtered_01_06"
+python main.py --process_papers "./papers"
 ```
 
 This will extract text and images from all PDFs.
@@ -61,11 +61,11 @@ python main.py --query "Which BGR circuit has the lowest power?"
 
 ---
 
-## 📝 Example Workflow
+## ðŸ“ Example Workflow
 
 ```bash
 # Terminal 1: Navigate to project
-cd C:\Users\VikasKumar\Documents\github_repos\MuaLLM-Gemini
+cd .
 
 # Activate environment
 venv\Scripts\activate
@@ -74,7 +74,7 @@ venv\Scripts\activate
 cd gemini\tools
 
 # Process 5 papers first (for testing)
-python pdf2json_chunked.py --paper_path "C:\Users\VikasKumar\Documents\github_repos\Filtered_01_06" --output_path "../finalAgent_db/documents.json"
+python pdf2json_chunked.py --paper_path "./papers" --output_path "../finalAgent_db/documents.json"
 
 # Build database
 python search.py --load_data
@@ -85,7 +85,7 @@ python main.py --interactive
 
 ---
 
-## 🔍 Sample Questions to Try
+## ðŸ” Sample Questions to Try
 
 1. "What is the power consumption of the lowest power bandgap reference?"
 2. "Show me the schematic of a PTAT current generator"
@@ -95,7 +95,7 @@ python main.py --interactive
 
 ---
 
-## ⚠️ Troubleshooting
+## âš ï¸ Troubleshooting
 
 **Error: API key not found**
 - Make sure `.env` file exists in the root folder
@@ -115,20 +115,20 @@ python main.py --interactive
 
 ---
 
-## 📁 Important Paths
+## ðŸ“ Important Paths
 
-- **Project Root**: `C:\Users\VikasKumar\Documents\github_repos\MuaLLM-Gemini`
-- **PDF Papers**: `C:\Users\VikasKumar\Documents\github_repos\Filtered_01_06`
+- **Project Root**: `.`
+- **PDF Papers**: `./papers`
 - **Database**: `gemini\finalAgent_db\`
 - **Main Script**: `gemini\tools\main.py`
 
 ---
 
-## 🎯 Next Steps
+## ðŸŽ¯ Next Steps
 
 1. Process all papers (takes time but improves results)
 2. Install Elasticsearch for better BM25 search
 3. Get a Cohere API key for reranking
 4. Try different types of questions
 
-Enjoy using MuaLLM-Gemini! 🎉
+Enjoy using AnuRAG! ðŸŽ‰

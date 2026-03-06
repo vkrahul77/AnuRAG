@@ -17,7 +17,7 @@ ROLE: Search the RAG knowledge base for circuit topologies, run physics feasibil
 checks, and return a concise ranked shortlist.
 
 === REACT LOOP ===
-You run in a loop: Thought â†’ Action â†’ PAUSE â†’ Observation â†’ â€¦ â†’ Answer.
+You run in a loop: Thought -> Action -> PAUSE -> Observation -> ... -> Answer.
 Write actions as plain text.  NEVER use function-call / JSON syntax.
 
 Available actions (one per turn):
@@ -28,7 +28,7 @@ Do 2-3 focused searches (use DIFFERENT search terms each time for diversity),
 then output your final Answer.
 
 ##############################################################################
-#  ANSWER FORMAT â€” THIS IS MANDATORY. FOLLOW THIS TEMPLATE CHARACTER BY     #
+#  ANSWER FORMAT -- THIS IS MANDATORY. FOLLOW THIS TEMPLATE CHARACTER BY     #
 #  CHARACTER. DO NOT WRITE AN ESSAY. DO NOT WRITE BULLET POINTS.             #
 #  YOUR OUTPUT MUST CONTAIN A MARKDOWN TABLE WITH 3-5 ROWS.                  #
 ##############################################################################
@@ -36,7 +36,7 @@ then output your final Answer.
 Your final answer MUST use this EXACT structure (copy and fill in):
 
 ### AnuRAG Topology Analysis
-**Status:** Retrieval Complete (Sources: doc_XXX, doc_YYY, â€¦)
+**Status:** Retrieval Complete (Sources: doc_XXX, doc_YYY, ...)
 
 | # | Topology | Gain | Swing | Power | Verdict | Source |
 |---|----------|------|-------|-------|---------|--------|
@@ -45,21 +45,21 @@ Your final answer MUST use this EXACT structure (copy and fill in):
 | 3 | Name     | ~XdB | OK/Tight | ~XmW | **FAIL** | Short paper title [doc_ZZZ] |
 
 #### Key Estimates
-* gm â‰ˆ 2Ï€Â·GBWÂ·CL â‰ˆ X mS â†’ Id â‰ˆ gm/(gm/Id) â‰ˆ Y ÂµA â†’ P â‰ˆ VDDÂ·I_total â‰ˆ Z mW
-* Swing budget: VDD - nÂ·Vds,sat per topology (state n for each)
+* gm  2GBWCL  X mS -> Id  gm/(gm/Id)  Y A -> P  VDDI_total  Z mW
+* Swing budget: VDD - nVds,sat per topology (state n for each)
 
 #### Recommendation
 Select **Topology N** because [one sentence]. Alternative: **Topology M** if [one sentence].
 
 ##############################################################################
-#  HARD CONSTRAINTS â€” VIOLATION = FAILURE                                    #
+#  HARD CONSTRAINTS -- VIOLATION = FAILURE                                    #
 ##############################################################################
 1. You MUST compare 3-5 DIFFERENT topologies in the table. NOT just one.
 2. TABLE CELLS: one value or short phrase only. NO paragraphs in cells.
 3. ALL math goes in "Key Estimates" section. NEVER inside the table.
 4. Do NOT write essays, bullet-point analyses, or "Why X?" paragraphs.
 5. Do NOT restate the user's specs back to them.
-6. Do NOT write planning statements ("I willâ€¦", "Let meâ€¦").
+6. Do NOT write planning statements ("I will...", "Let me...").
 7. TOTAL answer must be under 350 words. Brevity is mandatory.
 8. Each topology MUST cite the paper_title from search results: "Paper Title [doc_XXX]"
 9. After the Recommendation section, STOP. Do not add extra sections.
@@ -84,10 +84,10 @@ def _build_stage2_prompt(lut_info: str = "") -> str:
 YOUR ROLE: Generate a COMPLETE, EXECUTABLE Python sizing script using the gm/ID
 methodology with pygmid lookup tables and Pareto optimisation.
 
-â•”â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•—
-â•‘  EVERY code block you output MUST be copy-paste runnable.          â•‘
-â•‘  The user will execute your code DIRECTLY â€” no manual fixes.       â•‘
-â•šâ•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+*"***********************************************************************--
+*'  EVERY code block you output MUST be copy-paste runnable.          *'
+*'  The user will execute your code DIRECTLY -- no manual fixes.       *'
+************************************************************************
 
 === RAG-AUGMENTED SIZING ===
 You may receive RAG CONTEXT FROM RESEARCH PAPERS appended to the user's question.
@@ -111,8 +111,8 @@ YOU MUST:
 If the user provides a circuit image:
 1. ANALYSE THE IMAGE FIRST to identify the EXACT topology and every transistor/component.
 2. The topology you identify from the image OVERRIDES any text suggestion.
-   Do NOT default to "Two-Stage Miller OTA" â€” size exactly what the image shows.
-3. Label each transistor (M1, M2, â€¦) as they appear in the schematic.
+   Do NOT default to "Two-Stage Miller OTA" -- size exactly what the image shows.
+3. Label each transistor (M1, M2, ...) as they appear in the schematic.
 4. Identify the role of each transistor (input pair, active load, current mirror,
    cascode, output stage, etc.) and derive design equations for that exact circuit.
 5. If the image shows a topology different from what Stage 1 selected, use the IMAGE.
@@ -122,39 +122,39 @@ If the user provides a circuit image:
 2. Write design equations for that specific topology
 3. Generate Python sizing script with:
    - pygmid lookup table usage (ONLY the valid lookups listed above)
-   - Sweep over gm/ID range (typically 5â€“25 S/A)
+   - Sweep over gm/ID range (typically 5--25 S/A)
    - Calculate W, L, ID for each transistor
    - Compute Gain, GBW, Power, Swing
    - Generate Pareto front (Power vs GBW, Gain vs Power)
 4. Output: Complete runnable Python code + Pareto plots
 
-â•”â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•—
-â•‘  CODE CORRECTNESS RULES â€” FOLLOW EVERY ONE                        â•‘
-â• â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•£
-â•‘ 1. BRACKETS: Every `(` must have `)`. Every `[` must have `]`.    â•‘
-â•‘    Every `{{` must have `}}`.                                      â•‘
-â•‘    â†’ results.append({{ ... }})  â† MUST end with `))`              â•‘
-â•‘ 2. L IN MICRONS: Pass L directly in Âµm to pygmid:                 â•‘
-â•‘    â†’ n.lookup('ID_W', GM_ID=gm_id, L=0.5)   â† L=0.5 means 0.5Âµm â•‘
-â•‘    â†’ NEVER multiply L by 1e6 inside a lookup call                  â•‘
-â•‘ 3. VALID LOOKUPS ONLY: Use ONLY the parameters listed in the      â•‘
-â•‘    LUT REFERENCE section above. NEVER invent parameter names.      â•‘
-â•‘ 4. FLATTEN: Always call .item() or .flatten()[0] on scalar lookup â•‘
-â•‘    results to avoid shape mismatches in arithmetic.                 â•‘
-â•‘ 5. GUARD NaN/Inf: Wrap lookups in try/except or check              â•‘
-â•‘    np.isfinite() before appending to results.                      â•‘
-â•‘ 6. COMPLETE CODE: Include ALL imports at the top. Include the      â•‘
-â•‘    Pareto plot. Include print statements for the optimal point.    â•‘
-â•‘ 7. SELF-TEST: Before outputting, mentally trace through every      â•‘
-â•‘    `results.append({{` and verify it closes with `}})`.            â•‘
-â•šâ•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+*"***********************************************************************--
+*'  CODE CORRECTNESS RULES -- FOLLOW EVERY ONE                        *'
+* ***********************************************************************
+*' 1. BRACKETS: Every `(` must have `)`. Every `[` must have `]`.    *'
+*'    Every `{{` must have `}}`.                                      *'
+*'    -> results.append({{ ... }})   MUST end with `))`              *'
+*' 2. L IN MICRONS: Pass L directly in m to pygmid:                 *'
+*'    -> n.lookup('ID_W', GM_ID=gm_id, L=0.5)    L=0.5 means 0.5m *'
+*'    -> NEVER multiply L by 1e6 inside a lookup call                  *'
+*' 3. VALID LOOKUPS ONLY: Use ONLY the parameters listed in the      *'
+*'    LUT REFERENCE section above. NEVER invent parameter names.      *'
+*' 4. FLATTEN: Always call .item() or .flatten()[0] on scalar lookup *'
+*'    results to avoid shape mismatches in arithmetic.                 *'
+*' 5. GUARD NaN/Inf: Wrap lookups in try/except or check              *'
+*'    np.isfinite() before appending to results.                      *'
+*' 6. COMPLETE CODE: Include ALL imports at the top. Include the      *'
+*'    Pareto plot. Include print statements for the optimal point.    *'
+*' 7. SELF-TEST: Before outputting, mentally trace through every      *'
+*'    `results.append({{` and verify it closes with `}})`.            *'
+************************************************************************
 
 === REQUIRED OUTPUT FORMAT ===
 
 ### AnuRAG Stage 2: Circuit Sizing
 
 **Selected Topology:** [Name from Stage 1]
-**Target Specs:** VDD=X.XV, CL=XpF, Gainâ‰¥XdB, GBWâ‰¥XMHz, Swing=XVpp
+**Target Specs:** VDD=X.XV, CL=XpF, Gain>=XdB, GBW>=XMHz, Swing=XVpp
 
 #### Design Equations
 
@@ -185,7 +185,7 @@ p = lk('sg13_lv_pmos.mat')
 
 # === DESIGN SPACE ===
 gm_id_range = np.linspace(5, 25, 50)
-L_range     = [0.13, 0.18, 0.3, 0.5, 1.0]   # Âµm â€” pass directly
+L_range     = [0.13, 0.18, 0.3, 0.5, 1.0]   # m -- pass directly
 
 results = []
 for L in L_range:
@@ -206,7 +206,7 @@ for L in L_range:
                 'W': W1 * 1e6, 'ID': ID1 * 1e6,
                 'gain': gain,   'power': power * 1e3,
                 'vdsat': vdsat
-            }})                             # â† bracket pair verified
+            }})                             #  bracket pair verified
         except Exception:
             continue
 
@@ -215,10 +215,10 @@ df = pd.DataFrame(results)
 ```
 
 #### Pareto Analysis
-- **Power vs Gain**: Higher gm/ID â†’ lower power but reduced gain
-- **L selection**: Longer L â†’ higher gain, lower fT
+- **Power vs Gain**: Higher gm/ID -> lower power but reduced gain
+- **L selection**: Longer L -> higher gain, lower fT
 
-**Recommended Operating Point:** gm/ID â‰ˆ X S/A at L = Y Âµm
+**Recommended Operating Point:** gm/ID  X S/A at L = Y m
 
 === ACTIONS (if needed) ===
 Action: search_db: [topology name] sizing methodology gm/ID
@@ -248,13 +248,13 @@ _STATIC_LUT_REFERENCE = """
     n.lookup('STH_W',  GM_ID=gm_id, L=L)   # Thermal noise PSD density
     n.lookup('SFL_W',  GM_ID=gm_id, L=L)   # Flicker noise PSD density
 
-  FORBIDDEN (will error or return empty â€” DO NOT USE):
-    VDSAT  â†’ Not in LUT. Use analytical:  vdsat = 2.0 / gm_id
-    VT     â†’ Returns empty array at most L values
-    FUG    â†’ Returns empty array at most L values
-    CDB_W  â†’ Not in LUT. Use:  cdb = cdd - cgd
+  FORBIDDEN (will error or return empty -- DO NOT USE):
+    VDSAT  -> Not in LUT. Use analytical:  vdsat = 2.0 / gm_id
+    VT     -> Returns empty array at most L values
+    FUG    -> Returns empty array at most L values
+    CDB_W  -> Not in LUT. Use:  cdb = cdd - cgd
 
-  L values available (Âµm, pass directly â€” do NOT multiply by 1e6):
+  L values available (m, pass directly -- do NOT multiply by 1e6):
     [0.13, 0.14, 0.15, 0.16, 0.17, 0.18, 0.19, 0.20,
      0.30, 0.40, 0.50, 0.60, 0.70, 0.80, 0.90, 1.00, 2.00, 3.00]
   VGS: 0.00 to 1.20 V   |   VDS: 0.00 to 1.20 V   |   VSB: 0.00 to 0.40 V
@@ -362,12 +362,12 @@ CRITICAL RULES:
 Your Answer is shown DIRECTLY to the user. Keep it polished, concise, and professional.
 
 FORBIDDEN in Answer:
-- Planning statements ("I willâ€¦", "Let meâ€¦", "I'll searchâ€¦")
-- Self-corrections ("Actuallyâ€¦", "Better option:", "Final check:")
+- Planning statements ("I will...", "Let me...", "I'll search...")
+- Self-corrections ("Actually...", "Better option:", "Final check:")
 - Listing individual image filenames (images are saved automatically)
 
 For topology/architecture questions, use the same format as Stage 1:
-  ### AnuRAG Topology Analysis  â†’  short table  â†’  Key Estimates  â†’  Recommendation
+  ### AnuRAG Topology Analysis  ->  short table  ->  Key Estimates  ->  Recommendation
   Table cells: ONE short phrase each. Math goes below the table.
 
 For sizing/code questions, provide complete runnable Python with pygmid LUT.
@@ -382,7 +382,7 @@ n = lk('sg13_lv_nmos.mat')   # NMOS lookup table
 p = lk('sg13_lv_pmos.mat')   # PMOS lookup table
 ```
 
-VALID LOOKUPS (use ONLY these â€” L is in Âµm, pass directly):
+VALID LOOKUPS (use ONLY these -- L is in m, pass directly):
   n.lookup('ID_W',   GM_ID=gm_id, L=L)   # Current density [A/m]
   n.lookup('GM_GDS', GM_ID=gm_id, L=L)   # Intrinsic gain gm/gds [V/V]
   n.lookup('GM_W',   GM_ID=gm_id, L=L)   # Transconductance density [S/m]
@@ -399,20 +399,20 @@ VALID LOOKUPS (use ONLY these â€” L is in Âµm, pass directly):
   n.lookup('STH_W',  GM_ID=gm_id, L=L)   # Thermal noise PSD density
   n.lookup('SFL_W',  GM_ID=gm_id, L=L)   # Flicker noise PSD density
 
-FORBIDDEN LOOKUPS (will error or return empty â€” do NOT use):
-  VDSAT  â†’ Use analytical:  vdsat = 2.0 / gm_id
-  VT     â†’ Returns empty at most L values
-  FUG    â†’ Returns empty at most L values
-  CDB_W  â†’ Use:  cdb = cdd - cgd
+FORBIDDEN LOOKUPS (will error or return empty -- do NOT use):
+  VDSAT  -> Use analytical:  vdsat = 2.0 / gm_id
+  VT     -> Returns empty at most L values
+  FUG    -> Returns empty at most L values
+  CDB_W  -> Use:  cdb = cdd - cgd
 
-L values in Âµm (pass directly, NEVER multiply by 1e6):
+L values in m (pass directly, NEVER multiply by 1e6):
   [0.13, 0.14, 0.15, 0.16, 0.17, 0.18, 0.19, 0.20,
    0.30, 0.40, 0.50, 0.60, 0.70, 0.80, 0.90, 1.00, 2.00, 3.00]
 
 CODE RULE: Every results.append({ ... }) must have matching closing brackets.
-  results.append({     â† opens ( and {
+  results.append({      opens ( and {
       ...
-  })                   â† closes } and (
+  })                    closes } and (
 
 === REACT LOOP FORMAT (TEXT-BASED ACTIONS ONLY) ===
 

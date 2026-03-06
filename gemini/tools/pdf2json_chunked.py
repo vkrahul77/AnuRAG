@@ -330,9 +330,9 @@ async def main(pdf_files: List[str],
                 )
                 new_documents.append(document)
                 current_start_number += num_images
-                print(f"âœ“ Processed: {os.path.basename(pdf_file)} - {len(document['chunks'])} chunks, {len(document['images'])} images")
+                print(f"(ok) Processed: {os.path.basename(pdf_file)} - {len(document['chunks'])} chunks, {len(document['images'])} images")
             except Exception as e:
-                print(f"âœ— Error processing {pdf_file}: {e}")
+                print(f"-- Error processing {pdf_file}: {e}")
                 
             progress.update(pdf_task, advance=1)
             progress.remove_task(process_task)

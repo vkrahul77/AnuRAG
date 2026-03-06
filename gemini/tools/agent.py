@@ -27,7 +27,7 @@ from messages import system_message
 from search import main as search_db
 from load_titles import load_titles
 
-# Cost estimation â€” use config-driven costs
+# Cost estimation -- use config-driven costs
 def calculate_cost(input_tokens: int, output_tokens: int) -> Dict[str, float]:
     """Calculate estimated cost based on token usage and active model."""
     costs = get_model_costs()

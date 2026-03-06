@@ -57,14 +57,14 @@ def main():
             doc["title"] = os.path.splitext(os.path.basename(pdf_path))[0]
     
     # Create vector database and run contextualization
-    print(f"\n🚀 Starting contextualization...")
+    print(f"\n Starting contextualization...")
     t_start = time.time()
     
     vector_db = ContextualVectorDB("base_db")
     vector_db.load_data(dataset, contextualize=True, text_only=args.text_only)
     
     elapsed = time.time() - t_start
-    print(f"\n⏱️  Total time: {elapsed/60:.1f} minutes ({elapsed/3600:.2f} hours)")
+    print(f"\n  Total time: {elapsed/60:.1f} minutes ({elapsed/3600:.2f} hours)")
     
     # Save context data for inspection
     print("\nSaving context.json...")
@@ -91,7 +91,7 @@ def main():
     
     with open("../finalAgent_db/context.json", "w", encoding="utf-8") as f:
         json.dump(context_data, f, indent=2)
-    print(f"✅ context.json saved ({len(context_data)} entries)")
+    print(f" context.json saved ({len(context_data)} entries)")
     
     # Re-index Elasticsearch if available
     if ES_AVAILABLE:
@@ -99,9 +99,9 @@ def main():
         try:
             es_bm25 = create_elasticsearch_bm25_index(vector_db)
             if es_bm25:
-                print("✅ Elasticsearch re-indexed with contextualized content")
+                print(" Elasticsearch re-indexed with contextualized content")
         except Exception as e:
-            print(f"⚠️ ES indexing failed: {e}")
+            print(f" ES indexing failed: {e}")
     
     # Print some sample contextualizations
     print("\n" + "=" * 60)
@@ -118,7 +118,7 @@ def main():
         print(f"  Content: {orig[:150]}...")
     
     print("\n" + "=" * 60)
-    print("✅ CONTEXTUALIZATION COMPLETE")
+    print(" CONTEXTUALIZATION COMPLETE")
     print("=" * 60)
 
 

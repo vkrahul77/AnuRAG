@@ -1,6 +1,6 @@
 # AnuRAG Quick Start Guide
 
-## ðŸš€ 5-Minute Setup
+##  5-Minute Setup
 
 ### Step 1: Get Your Gemini API Key
 
@@ -61,7 +61,7 @@ python main.py --query "Which BGR circuit has the lowest power?"
 
 ---
 
-## ðŸ“ Example Workflow
+## " Example Workflow
 
 ```bash
 # Terminal 1: Navigate to project
@@ -85,7 +85,7 @@ python main.py --interactive
 
 ---
 
-## ðŸ” Sample Questions to Try
+## " Sample Questions to Try
 
 1. "What is the power consumption of the lowest power bandgap reference?"
 2. "Show me the schematic of a PTAT current generator"
@@ -95,7 +95,7 @@ python main.py --interactive
 
 ---
 
-## âš ï¸ Troubleshooting
+##   Troubleshooting
 
 **Error: API key not found**
 - Make sure `.env` file exists in the root folder
@@ -115,7 +115,7 @@ python main.py --interactive
 
 ---
 
-## ðŸ“ Important Paths
+## " Important Paths
 
 - **Project Root**: `.`
 - **PDF Papers**: `./papers`
@@ -124,11 +124,11 @@ python main.py --interactive
 
 ---
 
-## ðŸŽ¯ Next Steps
+##  Next Steps
 
 1. Process all papers (takes time but improves results)
 2. Install Elasticsearch for better BM25 search
 3. Get a Cohere API key for reranking
 4. Try different types of questions
 
-Enjoy using AnuRAG! ðŸŽ‰
+Enjoy using AnuRAG! 

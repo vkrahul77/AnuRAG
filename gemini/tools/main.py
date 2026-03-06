@@ -60,7 +60,7 @@ try:
         genai_client = new_genai.Client(api_key=api_key)
         GEMINI_AVAILABLE = True
         USE_NEW_API = True
-        print("âœ… Using new google-genai package (recommended)")
+        print("... Using new google-genai package (recommended)")
 except ImportError:
     pass
 
@@ -73,7 +73,7 @@ if not GEMINI_AVAILABLE:
         if api_key:
             genai.configure(api_key=api_key)
             GEMINI_AVAILABLE = True
-            print("âš ï¸ Using deprecated google-generativeai package. Consider upgrading to google-genai.")
+            print("  Using deprecated google-generativeai package. Consider upgrading to google-genai.")
     except ImportError:
         print("Error: No Gemini package installed. Run: pip install google-genai")
         sys.exit(1)
@@ -83,7 +83,7 @@ if not GEMINI_AVAILABLE:
     print("Please set your API key in a .env file or environment variable")
     sys.exit(1)
 
-# Cost per million tokens â€” use config-driven costs
+# Cost per million tokens -- use config-driven costs
 def calculate_cost(input_tokens: int, output_tokens: int) -> Dict[str, float]:
     """Calculate estimated cost based on token usage and active model."""
     costs = get_model_costs()
@@ -286,13 +286,13 @@ def extract_topology_images(search_results: Dict, answer_text: str, output_dir: 
             pass
     
     if saved_images:
-        print(f"\nðŸ“· Saved {len(saved_images)} topology images to: {output_path}")
+        print(f"\n" Saved {len(saved_images)} topology images to: {output_path}")
         for img in saved_images[:5]:
             print(f"   - {os.path.basename(img['saved_path'])}")
         if len(saved_images) > 5:
             print(f"   ... and {len(saved_images) - 5} more")
     else:
-        print(f"\nðŸ“· No topology images found in search results")
+        print(f"\n" No topology images found in search results")
     
     return {
         'images': saved_images,
@@ -355,8 +355,8 @@ def format_anurag_output(text: str, sources_found: List[str] = None, topology_im
         # Collect unique source doc IDs
         source_docs = sorted(set(img.get('doc_id', 'unknown') for img in topology_images.get('images', [])))
         sources_str = ", ".join(source_docs[:5])
-        images_section = f"\n\n---\nðŸ“· **{topology_images['count']} reference images** saved from {sources_str}"
-        images_section += f"  \nðŸ“‚ `{topology_images['output_dir']}`\n"
+        images_section = f"\n\n---\n" **{topology_images['count']} reference images** saved from {sources_str}"
+        images_section += f"  \n" `{topology_images['output_dir']}`\n"
         text += images_section
     
     # Fix table formatting - ensure each row is on its own line
@@ -519,7 +519,7 @@ def clean_thinking_artifacts(text: str) -> str:
     
     if len(cleaned) < len(text):
         removed = len(text) - len(cleaned)
-        print(f"ðŸ§¹ Removed {removed} characters of thinking artifacts")
+        print(f" Removed {removed} characters of thinking artifacts")
     
     return cleaned.strip()
 
@@ -642,7 +642,7 @@ def detect_and_fix_repetition(text: str, min_repeat_len: int = 30, max_repeats: 
                     cleaned_paras.append(para)
             
             if len(cleaned_paras) < len(paragraphs):
-                print("âš ï¸ Detected paragraph repetition - cleaning output")
+                print("  Detected paragraph repetition - cleaning output")
                 text = '\n\n'.join(cleaned_paras)
     
     # Method 2: Check for line-level repetition (same line repeated many times)
@@ -670,7 +670,7 @@ def detect_and_fix_repetition(text: str, min_repeat_len: int = 30, max_repeats: 
                     cleaned_lines.append(line)
             
             if len(cleaned_lines) < len(lines):
-                print("âš ï¸ Detected line repetition - cleaning output")
+                print("  Detected line repetition - cleaning output")
                 text = '\n'.join(cleaned_lines)
     
     # Method 3: Check for phrase-level repetition in the latter half of text
@@ -694,13 +694,13 @@ def detect_and_fix_repetition(text: str, min_repeat_len: int = 30, max_repeats: 
                     # Keep content up to just after the first occurrence
                     truncate_at = first_occurrence + pattern_len
                     if truncate_at < len(text) - 200:
-                        print("âš ï¸ Detected phrase repetition loop - truncating output")
+                        print("  Detected phrase repetition loop - truncating output")
                         text = text[:truncate_at] + "\n\n[... repetitive output truncated ...]"
                         break
     
     if len(text) < original_len:
         removed = original_len - len(text)
-        print(f"âœ‚ï¸ Removed {removed} characters of repetitive content")
+        print(f" Removed {removed} characters of repetitive content")
     
     # Method 4: Clean corrupted line fragments (e.g., ")}", stray quotes)
     # These appear when the model's output gets corrupted mid-repetition
@@ -725,7 +725,7 @@ def detect_and_fix_repetition(text: str, min_repeat_len: int = 30, max_repeats: 
     
     if len(cleaned_lines) < len(lines):
         text = '\n'.join(cleaned_lines)
-        print(f"âœ‚ï¸ Cleaned {len(lines) - len(cleaned_lines)} corrupted/duplicate lines")
+        print(f" Cleaned {len(lines) - len(cleaned_lines)} corrupted/duplicate lines")
     
     # Method 5: Truncate at code block end if answer section has duplicates
     # Find the ANSWER section and clean it
@@ -755,7 +755,7 @@ def detect_and_fix_repetition(text: str, min_repeat_len: int = 30, max_repeats: 
                         if remaining.count(sample[:50]) > 1:
                             answer_section = answer_section[:last_block_end]
                             text = before_answer + answer_section
-                            print("âœ‚ï¸ Truncated repetitive content after code block")
+                            print(" Truncated repetitive content after code block")
     
     return text
 
@@ -776,7 +776,7 @@ def extract_images_from_query(query: str) -> tuple[str, List[str]]:
     image_paths = []
     cleaned_query = query
 
-    # â”€â”€ Strategy 1: "path:" prefix  â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    # -- Strategy 1: "path:" prefix  ----------------------------------
     # Matches  "path: C:\...\file.png"  or  "path: :\...\file.png" (missing drive)
     path_prefix_pat = re.compile(
         r'path:\s*([A-Za-z]?:?\\[^"*<>|]+?' + ext_group + r')',
@@ -791,7 +791,7 @@ def extract_images_from_query(query: str) -> tuple[str, List[str]]:
             image_paths.append(raw)
             cleaned_query = cleaned_query.replace(m.group(0), '[IMAGE PROVIDED]')
 
-    # â”€â”€ Strategy 2: Windows path (drive letter present, supports spaces) â”€
+    # -- Strategy 2: Windows path (drive letter present, supports spaces) -
     # Greedy up to the extension; rstrip trailing punctuation.
     win_pattern = re.compile(
         r'([A-Za-z]:\\[^"*<>|]+?' + ext_group + r')',
@@ -805,7 +805,7 @@ def extract_images_from_query(query: str) -> tuple[str, List[str]]:
             image_paths.append(raw)
             cleaned_query = cleaned_query.replace(m.group(1), '[IMAGE PROVIDED]')
 
-    # â”€â”€ Strategy 3: Unix absolute path â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    # -- Strategy 3: Unix absolute path -------------------------------
     unix_pattern = re.compile(
         r'(/[^"*<>|]+?' + ext_group + r')',
         re.IGNORECASE
@@ -819,9 +819,9 @@ def extract_images_from_query(query: str) -> tuple[str, List[str]]:
             cleaned_query = cleaned_query.replace(m.group(1), '[IMAGE PROVIDED]')
 
     if image_paths:
-        print(f"ðŸ“· Extracted {len(image_paths)} image path(s): {image_paths}")
+        print(f"" Extracted {len(image_paths)} image path(s): {image_paths}")
     else:
-        print("â„¹ï¸  No image paths extracted from query")
+        print("  No image paths extracted from query")
 
     return cleaned_query.strip(), image_paths
 
@@ -838,7 +838,7 @@ def load_image_for_gemini(image_path: str) -> Optional[Any]:
     """
     try:
         if not os.path.exists(image_path):
-            print(f"âš ï¸ Image not found: {image_path}")
+            print(f"  Image not found: {image_path}")
             return None
         
         img = Image.open(image_path)
@@ -847,11 +847,11 @@ def load_image_for_gemini(image_path: str) -> Optional[Any]:
         if img.mode in ('RGBA', 'P'):
             img = img.convert('RGB')
         
-        print(f"ðŸ“· Loaded image: {os.path.basename(image_path)} ({img.size[0]}x{img.size[1]})")
+        print(f"" Loaded image: {os.path.basename(image_path)} ({img.size[0]}x{img.size[1]})")
         return img
         
     except Exception as e:
-        print(f"âš ï¸ Error loading image {image_path}: {e}")
+        print(f"  Error loading image {image_path}: {e}")
         return None
 
 
@@ -872,11 +872,11 @@ class Agent:
         self.total_latency = 0
         self.user_images = []  # Store user-provided images
         
-        # Get the LLM provider (Gemini or Claude â€” configured in .env / config.py)
+        # Get the LLM provider (Gemini or Claude -- configured in .env / config.py)
         self.provider = get_llm_provider()
         self.chat_history = []  # Provider-agnostic history
         
-        print(f"ðŸ¤– Using model: {self.provider.model_name()} ({self.provider.provider_name()})")
+        print(f"- Using model: {self.provider.model_name()} ({self.provider.provider_name()})")
     
     def set_user_images(self, images: List[Any]):
         """Set user-provided images for multimodal queries."""
@@ -917,7 +917,7 @@ class Agent:
                 
                 if is_retryable and attempt < max_retries - 1:
                     wait_time = 5 * (2 ** attempt)
-                    print(f"âš ï¸ Server error (attempt {attempt + 1}/{max_retries}): {str(e)[:100]}")
+                    print(f"  Server error (attempt {attempt + 1}/{max_retries}): {str(e)[:100]}")
                     print(f"   Retrying in {wait_time}s...")
                     time.sleep(wait_time)
                     continue
@@ -933,7 +933,7 @@ class Agent:
         # Collect images for this turn
         images = None
         if include_images and self.user_images:
-            print(f"ðŸ“· Sending {len(self.user_images)} image(s) with query")
+            print(f"" Sending {len(self.user_images)} image(s) with query")
             images = self.user_images
             self.user_images = []  # Clear after use
         
@@ -1259,7 +1259,7 @@ def validate_and_repair_code(answer: str, bot, max_retries: int = 2) -> str:
         
         print(f"\n\u26a0\ufe0f Syntax error detected in code block {idx+1}: {error}")
         
-        # â”€â”€ PHASE 1: deterministic bracket fix â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+        # -- PHASE 1: deterministic bracket fix --------------------------
         fixed_code = _auto_fix_brackets(code)
         if _check_bracket_balance(fixed_code) is None and _validate_python_syntax(fixed_code) is None:
             print(f"   \u2705 Programmatic bracket fix succeeded")
@@ -1269,7 +1269,7 @@ def validate_and_repair_code(answer: str, bot, max_retries: int = 2) -> str:
             )
             continue  # move to next code block
         
-        # â”€â”€ PHASE 2: LLM repair (bracket fix wasn't enough) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+        # -- PHASE 2: LLM repair (bracket fix wasn't enough) ------------
         print(f"   Attempting LLM repair (up to {max_retries} retries)...")
         
         # Use the partially-fixed code as starting point
@@ -1321,7 +1321,7 @@ RULES FOR THE FIX:
                 working_code = candidate
                 print(f"   \u274c Attempt {attempt+1} still has errors: {remaining_err}")
         else:
-            # All LLM retries failed â€” use best effort (programmatic fix even if imperfect)
+            # All LLM retries failed -- use best effort (programmatic fix even if imperfect)
             if _validate_python_syntax(fixed_code) is None:
                 # Bracket-fixed code at least parses
                 print(f"   \u26a0\ufe0f LLM repair failed, using programmatic fix (parses OK)")
@@ -1375,7 +1375,7 @@ def _auto_fix_brackets(code: str) -> str:
         open_line = lines[line_num - 1]
         open_indent = len(open_line) - len(open_line.lstrip())
         
-        # â”€â”€ Determine closing sequence from unclosed brackets on this line â”€â”€
+        # -- Determine closing sequence from unclosed brackets on this line --
         line_stack = []
         in_str = None
         for ci, ch in enumerate(open_line):
@@ -1399,16 +1399,16 @@ def _auto_fix_brackets(code: str) -> str:
         if line_stack:
             close_seq = ''.join(pairs[b] for b in reversed(line_stack))
         else:
-            # Bracket opened on this line but scanner missed it â€” close reported one
+            # Bracket opened on this line but scanner missed it -- close reported one
             close_seq = pairs.get(bracket_char, '')
         
         if not close_seq:
             break
         
-        # â”€â”€ Find insertion point â”€â”€
+        # -- Find insertion point --
         # First non-blank line AFTER the opening with indent <= open_indent
         insert_pos = len(lines)  # default: end of code
-        for i in range(line_num, len(lines)):  # line_num is 1-based â†’ index starts one line after
+        for i in range(line_num, len(lines)):  # line_num is 1-based -> index starts one line after
             stripped = lines[i].strip()
             if not stripped:
                 continue
@@ -1435,7 +1435,7 @@ def _extract_error_context(code: str, error: str) -> str:
     # Try to parse line number from error
     m = re.search(r'line (\d+)', str(error), re.IGNORECASE)
     if not m:
-        # Can't locate â€” send full code (truncated)
+        # Can't locate -- send full code (truncated)
         return f"Here is the code:\n```python\n{code[:3000]}\n```"
     
     err_line = int(m.group(1))
@@ -1474,7 +1474,7 @@ def query(question: str, max_turns: int = 10, system_prompt: str = None, existin
     # Load images for multimodal input
     user_images = []
     if image_paths:
-        print(f"\nðŸ“· Found {len(image_paths)} image(s) in query:")
+        print(f"\n" Found {len(image_paths)} image(s) in query:")
         for path in image_paths:
             img = load_image_for_gemini(path)
             if img:
@@ -1483,7 +1483,7 @@ def query(question: str, max_turns: int = 10, system_prompt: str = None, existin
     # Reuse existing bot (conversation continuation) or create new one
     if existing_bot is not None:
         bot = existing_bot
-        print(f"ðŸ’¬ Continuing conversation (history: {len(bot.chat_history)} messages)")
+        print(f"' Continuing conversation (history: {len(bot.chat_history)} messages)")
     else:
         bot = Agent(active_system_message)
     
@@ -1492,9 +1492,9 @@ def query(question: str, max_turns: int = 10, system_prompt: str = None, existin
         bot.set_user_images(user_images)
         # Add image context to the query
         image_context = (
-            f"\n\n[CIRCUIT IMAGE PROVIDED â€” {len(user_images)} image(s)]\n"
+            f"\n\n[CIRCUIT IMAGE PROVIDED -- {len(user_images)} image(s)]\n"
             "IMPORTANT: Analyse the attached circuit schematic image FIRST.\n"
-            "Identify the EXACT topology, label every transistor (M1, M2, â€¦), "
+            "Identify the EXACT topology, label every transistor (M1, M2, ...), "
             "determine each transistor's role (input pair, active load, current mirror, "
             "cascode, tail source, output stage, etc.), and design/size THIS topology.\n"
             "Do NOT substitute a different topology. The image is the ground truth."
@@ -1517,7 +1517,7 @@ def query(question: str, max_turns: int = 10, system_prompt: str = None, existin
         
         # Handle None or error responses
         if result is None:
-            print("âš ï¸ Model returned empty response, retrying...")
+            print("  Model returned empty response, retrying...")
             continue
         
         if result.startswith("Error:"):
@@ -1551,7 +1551,7 @@ def query(question: str, max_turns: int = 10, system_prompt: str = None, existin
             
             # If this is the first turn, no search was done, and we need papers
             if i == 1 and last_observation is None and needs_paper_search and not answer_is_substantial:
-                print("\nâš ï¸ Agent tried to answer without searching. Reminding to use database...")
+                print("\n  Agent tried to answer without searching. Reminding to use database...")
                 next_prompt = """You skipped the database search! 
 
 IMPORTANT: You MUST search the database first before answering.
@@ -1639,8 +1639,8 @@ Original question: """ + question
                     
             except ConnectionError as e:
                 # Database connection failed - fall back to LLM knowledge
-                print(f"\nâš ï¸ Database connection failed: {e}")
-                print("â„¹ï¸ Falling back to LLM internal knowledge (no RAG search)")
+                print(f"\n  Database connection failed: {e}")
+                print(" Falling back to LLM internal knowledge (no RAG search)")
                 next_prompt = f"""Observation: DATABASE OFFLINE - Connection failed.
 
 The database is currently unavailable. Please proceed using your internal knowledge only.
@@ -1709,27 +1709,27 @@ def build_database() -> None:
     
     # Check if documents.json exists
     if not os.path.exists(documents_path):
-        print("ðŸ“„ documents.json not found. Processing papers first...")
+        print("" documents.json not found. Processing papers first...")
         
         # Use default path or prompt user
         paper_path = DEFAULT_PAPER_PATH
         
         if not os.path.exists(paper_path):
-            print(f"âŒ Default paper path not found: {paper_path}")
+            print(f" Default paper path not found: {paper_path}")
             print("Please run: python main.py --process_papers /path/to/your/pdfs/")
             return
         
-        print(f"ðŸ“‚ Using paper path: {paper_path}")
+        print(f"" Using paper path: {paper_path}")
         process_papers(paper_path)
         
         # Verify documents.json was created
         if not os.path.exists(documents_path):
-            print("âŒ Failed to create documents.json")
+            print(" Failed to create documents.json")
             return
         
-        print("âœ… Papers processed successfully!")
+        print("... Papers processed successfully!")
     
-    print("\nðŸ“Š Building vector database...")
+    print("\n" Building vector database...")
     search_db(query=None, load_data=True)
 
 
@@ -1760,20 +1760,20 @@ def interactive_mode() -> None:
     print("\n" + "="*60)
     print("AnuRAG - Analog Design Framework with RAG")
     print(f"LLM Provider: {LLM_PROVIDER.upper()} ({get_active_chat_model()})")
-    print("Two-Stage Workflow: Topology Selection â†’ Sizing")
+    print("Two-Stage Workflow: Topology Selection -> Sizing")
     print("="*60)
-    print("\nðŸ“Œ MODES:")
+    print("\n" MODES:")
     print("  [1] Topology Selection - Search RAG for circuit architectures")
     print("  [2] Sizing - Generate sizing script with Pareto optimization")
     print("  [0] General - Free-form queries (default)")
-    print("\nðŸ“Œ COMMANDS:")
+    print("\n" COMMANDS:")
     print("  'mode 1' or 'stage 1' - Switch to Topology Selection mode")
     print("  'mode 2' or 'stage 2' - Switch to Sizing mode")
     print("  'mode 0' or 'general' - Switch to General mode")
     print("  'quit' or 'exit' - Exit the program")
     print("  '---' on a new line - End multi-line input and submit")
     print("  'file:<path>' - Load question from a text file")
-    print("\nðŸ“Œ AFTER EACH ANSWER:")
+    print("\n" AFTER EACH ANSWER:")
     print("  [c] Continue - follow-up on same conversation (context preserved)")
     print("  [n] New query - fresh start in same mode")
     print("  [s] Switch mode - change to a different mode")
@@ -1792,7 +1792,7 @@ def interactive_mode() -> None:
             mode_indicator = f"[{mode_names[current_mode]}]"
             
             if active_bot:
-                print(f"\n{mode_indicator} ðŸ’¬ Conversation active ({len(active_bot.chat_history)} msgs)")
+                print(f"\n{mode_indicator} ' Conversation active ({len(active_bot.chat_history)} msgs)")
                 print(f"  Follow-up question (or 'new' for fresh query, 'mode X' to switch):")
             else:
                 print(f"\n{mode_indicator} Question (type '---' on new line to submit):")
@@ -1802,7 +1802,7 @@ def interactive_mode() -> None:
             
             if first_line.lower() in ['quit', 'exit', 'q']:
                 if session_cost > 0:
-                    print(f"\nðŸ“Š Session total: ${session_cost:.6f} across {session_turns} turns")
+                    print(f"\n" Session total: ${session_cost:.6f} across {session_turns} turns")
                 print("Goodbye!")
                 break
             
@@ -1810,13 +1810,13 @@ def interactive_mode() -> None:
             if first_line.lower() in ['mode 1', 'stage 1', 'topology', '1'] and not active_bot:
                 current_mode = 1
                 active_bot = None  # Reset conversation on mode switch
-                print("âœ… Switched to TOPOLOGY SELECTION mode")
+                print("... Switched to TOPOLOGY SELECTION mode")
                 print("   Ask: 'Design OTA for 12-bit ADC, VDD=1.2V, CL=2pF, Gain>=70dB, GBW>=500MHz'")
                 continue
             elif first_line.lower() in ['mode 2', 'stage 2', 'sizing', '2'] and not active_bot:
                 current_mode = 2
                 active_bot = None
-                print("âœ… Switched to SIZING mode")
+                print("... Switched to SIZING mode")
                 if last_topology_result:
                     print("   Previous topology selection available - reference it or specify new topology")
                 print("   Ask: 'Size Two-Stage OTA with VDD=1.2V, CL=2pF, GBW=500MHz using gm/ID=15'")
@@ -1824,13 +1824,13 @@ def interactive_mode() -> None:
             elif first_line.lower() in ['mode 0', 'general', '0'] and not active_bot:
                 current_mode = 0
                 active_bot = None
-                print("âœ… Switched to GENERAL mode")
+                print("... Switched to GENERAL mode")
                 continue
             
             # Handle 'new' command to start fresh query (discard conversation)
             if first_line.lower() in ['new', 'n', 'new query']:
                 active_bot = None
-                print("ðŸ”„ Starting fresh conversation.")
+                print("" Starting fresh conversation.")
                 continue
             
             # Handle 's' / 'switch' to switch mode and reset conversation
@@ -1848,7 +1848,7 @@ def interactive_mode() -> None:
                 else:
                     print("Invalid choice, staying in current mode.")
                     continue
-                print(f"âœ… Switched to {mode_names[current_mode]} mode (fresh conversation)")
+                print(f"... Switched to {mode_names[current_mode]} mode (fresh conversation)")
                 continue
             
             if not first_line:
@@ -1885,7 +1885,7 @@ def interactive_mode() -> None:
             if not question or question == '---':
                 continue
             
-            print(f"\nðŸ“¤ Submitting question ({len(question)} chars)...")
+            print(f"\n" Submitting question ({len(question)} chars)...")
             
             # Select system message based on mode and run query
             if current_mode == 1:
@@ -1904,9 +1904,9 @@ def interactive_mode() -> None:
                 try:
                     lut_info = get_lut_info(LUT_NMOS_PATH, LUT_PMOS_PATH)
                     stage2_prompt = _build_stage2_prompt(lut_info)
-                    print("âœ… LUT introspection loaded into Stage 2 prompt")
+                    print("... LUT introspection loaded into Stage 2 prompt")
                 except Exception as e:
-                    print(f"âš ï¸ Could not introspect LUT files ({e}), using static reference")
+                    print(f"  Could not introspect LUT files ({e}), using static reference")
                     stage2_prompt = system_message_stage2  # falls back to static
                 
                 # Prepend context from Stage 1 if available
@@ -1941,29 +1941,29 @@ def interactive_mode() -> None:
             
             # Suggest next step for Stage 1
             if current_mode == 1 and 'answer' in result and 'PASS' in result['answer']:
-                print("\nðŸ’¡ Tip: Type 'stage 2' to proceed to sizing with your selected topology")
+                print("\n' Tip: Type 'stage 2' to proceed to sizing with your selected topology")
             
             # === POST-ANSWER: Continue / New / Switch / Quit ===
             active_bot = result.get('bot')  # Preserve bot for potential continuation
             
-            print("\n" + "â”€"*40)
+            print("\n" + "-"*40)
             print("What next?")
             print("  [c] Continue - follow-up on this conversation")
             print("  [n] New query - start fresh in same mode")
             print("  [s] Switch mode - change mode (resets conversation)")
             print("  [q] Quit")
-            print("â”€"*40)
+            print("-"*40)
             
             choice = input("Choice [c/n/s/q]: ").strip().lower()
             
             if choice in ['q', 'quit', 'exit']:
                 if session_cost > 0:
-                    print(f"\nðŸ“Š Session total: ${session_cost:.6f} across {session_turns} turns")
+                    print(f"\n" Session total: ${session_cost:.6f} across {session_turns} turns")
                 print("Goodbye!")
                 break
             elif choice in ['n', 'new', 'new query']:
                 active_bot = None
-                print("ðŸ”„ Starting fresh conversation.")
+                print("" Starting fresh conversation.")
             elif choice in ['s', 'switch', 'switch mode']:
                 active_bot = None
                 print("\nSwitch to which mode?")
@@ -1977,17 +1977,17 @@ def interactive_mode() -> None:
                     current_mode = 2
                 else:
                     print("Invalid choice, staying in current mode.")
-                print(f"âœ… Switched to {mode_names[current_mode]} mode (fresh conversation)")
+                print(f"... Switched to {mode_names[current_mode]} mode (fresh conversation)")
             elif choice in ['c', 'continue', '']:
-                # Keep active_bot â€” it already has the conversation history
-                print("ðŸ’¬ Continuing conversation. Type your follow-up:")
+                # Keep active_bot -- it already has the conversation history
+                print("' Continuing conversation. Type your follow-up:")
             else:
                 # Default: treat any other input as a follow-up question directly
                 # (in case user just types their next question instead of pressing 'c')
                 if len(choice) > 3:
-                    # They typed a question directly â€” process it
+                    # They typed a question directly -- process it
                     question = choice
-                    print(f"\nðŸ“¤ Submitting follow-up ({len(question)} chars)...")
+                    print(f"\n" Submitting follow-up ({len(question)} chars)...")
                     if current_mode == 1:
                         result = query(question, max_turns=10, system_prompt=system_message_stage1, existing_bot=active_bot)
                         last_topology_result = result
@@ -2075,17 +2075,17 @@ Examples:
     
     # Process papers if specified
     if args.process_papers:
-        print(f"\nðŸ“„ Processing papers from: {args.process_papers}")
+        print(f"\n" Processing papers from: {args.process_papers}")
         process_papers(args.process_papers)
     
     # Build database if specified
     if args.build_db:
-        print("\nðŸ”¨ Building vector database...")
+        print("\n" Building vector database...")
         build_database()
     
     # Handle query or interactive mode
     if args.query:
-        print(f"\nðŸ” Querying: {args.query}")
+        print(f"\n" Querying: {args.query}")
         result = query(args.query, max_turns=args.max_turns)
         
         print("\n" + "="*60)
@@ -2100,7 +2100,7 @@ Examples:
     elif not args.process_papers and not args.build_db:
         # No arguments provided, show help
         parser.print_help()
-        print("\nðŸ’¡ Quick start:")
+        print("\n' Quick start:")
         print("   1. Set GOOGLE_API_KEY in .env file")
         print("   2. Run: python main.py --process_papers /path/to/papers/")
         print("   3. Run: python main.py --build_db")

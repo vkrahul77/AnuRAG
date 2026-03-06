@@ -1,6 +1,6 @@
 # AnuRAG: Complete Setup & Architecture Guide
 
-## ðŸ“‹ Table of Contents
+## " Table of Contents
 1. [Conda Environment Setup](#1-conda-environment-setup)
 2. [Gemini API Key Setup](#2-gemini-api-key-setup)
 3. [Which Model to Use](#3-which-model-to-use)
@@ -80,7 +80,7 @@ Paste this into the `.env` file:
 GOOGLE_API_KEY=AIzaSy_YOUR_ACTUAL_API_KEY_HERE
 ```
 
-**âš ï¸ Important**: 
+**  Important**: 
 - Replace `AIzaSy_YOUR_ACTUAL_API_KEY_HERE` with your actual key
 - No quotes around the key
 - No spaces around the `=` sign
@@ -116,9 +116,9 @@ This project uses **Gemini 2.0 Flash** because:
 
 | Feature | Gemini 2.0 Flash | Gemini 1.5 Pro |
 |---------|-----------------|----------------|
-| **Speed** | âš¡ Very Fast | ðŸ¢ Slower |
-| **Cost** | ðŸ’° Cheap ($0.075/1M input) | ðŸ’¸ Expensive ($3.50/1M) |
-| **Vision** | âœ… Yes | âœ… Yes |
+| **Speed** |  Very Fast |  Slower |
+| **Cost** | ' Cheap ($0.075/1M input) | ' Expensive ($3.50/1M) |
+| **Vision** | ... Yes | ... Yes |
 | **Context** | 1M tokens | 2M tokens |
 | **Best For** | This project | Complex reasoning |
 
@@ -151,60 +151,60 @@ model = genai.GenerativeModel('gemini-1.5-flash')
 ## 4. Project Architecture
 
 ```
-â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
-â”‚                        USER QUERY                                â”‚
-â”‚              "Which BGR circuit has lowest power?"               â”‚
-â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
-                              â”‚
-                              â–¼
-â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
-â”‚                      main.py (Entry Point)                       â”‚
-â”‚  - Parses command line arguments                                 â”‚
-â”‚  - Routes to appropriate function                                â”‚
-â”‚  - Initializes the Agent                                         â”‚
-â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
-                              â”‚
-                              â–¼
-â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
-â”‚                    agent.py (ReAct Agent)                        â”‚
-â”‚  - Implements Thought â†’ Action â†’ Observation loop                â”‚
-â”‚  - Uses Gemini for reasoning                                     â”‚
-â”‚  - Calls tools based on the query                                â”‚
-â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
-                              â”‚
-              â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¼â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
-              â–¼               â–¼               â–¼
-â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â” â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â” â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
-â”‚  load_titles.py  â”‚ â”‚   search.py     â”‚ â”‚ fullcontext.py   â”‚
-â”‚                  â”‚ â”‚                 â”‚ â”‚                  â”‚
-â”‚ Returns list of  â”‚ â”‚ Hybrid search:  â”‚ â”‚ Full document    â”‚
-â”‚ paper titles     â”‚ â”‚ - Vector search â”‚ â”‚ Q&A using        â”‚
-â”‚                  â”‚ â”‚ - BM25 search   â”‚ â”‚ complete PDF     â”‚
-â”‚                  â”‚ â”‚ - Reranking     â”‚ â”‚ context          â”‚
-â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜ â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜ â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
-                              â”‚
-                              â–¼
-â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
-â”‚                    Vector Database                               â”‚
-â”‚  - Stores embeddings (Gemini text-embedding-004)                 â”‚
-â”‚  - Stores metadata (doc_id, chunk_id, content)                   â”‚
-â”‚  - Stores contextualized descriptions                            â”‚
-â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
-                              â”‚
-                              â–¼
-â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
-â”‚                 pdf2json_chunked.py                              â”‚
-â”‚  - Extracts text from PDFs                                       â”‚
-â”‚  - Extracts images from PDFs                                     â”‚
-â”‚  - Creates overlapping chunks                                    â”‚
-â”‚  - Saves to documents.json                                       â”‚
-â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
-                              â”‚
-                              â–¼
-â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
-â”‚                      PDF Papers                                  â”‚
-â”‚         ./papersâ”‚
-â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
++-----------------------------------------------------------------+
+|                        USER QUERY                                |
+|              "Which BGR circuit has lowest power?"               |
++-----------------------------------------------------------------+
+                              |
+                              v
++-----------------------------------------------------------------+
+|                      main.py (Entry Point)                       |
+|  - Parses command line arguments                                 |
+|  - Routes to appropriate function                                |
+|  - Initializes the Agent                                         |
++-----------------------------------------------------------------+
+                              |
+                              v
++-----------------------------------------------------------------+
+|                    agent.py (ReAct Agent)                        |
+|  - Implements Thought -> Action -> Observation loop                |
+|  - Uses Gemini for reasoning                                     |
+|  - Calls tools based on the query                                |
++-----------------------------------------------------------------+
+                              |
+              +---------------+---------------+
+              v               v               v
++------------------+ +-----------------+ +------------------+
+|  load_titles.py  | |   search.py     | | fullcontext.py   |
+|                  | |                 | |                  |
+| Returns list of  | | Hybrid search:  | | Full document    |
+| paper titles     | | - Vector search | | Q&A using        |
+|                  | | - BM25 search   | | complete PDF     |
+|                  | | - Reranking     | | context          |
++------------------+ +-----------------+ +------------------+
+                              |
+                              v
++-----------------------------------------------------------------+
+|                    Vector Database                               |
+|  - Stores embeddings (Gemini text-embedding-004)                 |
+|  - Stores metadata (doc_id, chunk_id, content)                   |
+|  - Stores contextualized descriptions                            |
++-----------------------------------------------------------------+
+                              |
+                              v
++-----------------------------------------------------------------+
+|                 pdf2json_chunked.py                              |
+|  - Extracts text from PDFs                                       |
+|  - Extracts images from PDFs                                     |
+|  - Creates overlapping chunks                                    |
+|  - Saves to documents.json                                       |
++-----------------------------------------------------------------+
+                              |
+                              v
++-----------------------------------------------------------------+
+|                      PDF Papers                                  |
+|         ./papers|
++-----------------------------------------------------------------+
 ```
 
 ---
@@ -213,7 +213,7 @@ model = genai.GenerativeModel('gemini-1.5-flash')
 
 ### File-by-File Breakdown
 
-#### ðŸ“„ `main.py` - The Entry Point
+#### " `main.py` - The Entry Point
 ```
 ROLE: Command center of the application
 
@@ -224,13 +224,13 @@ WHAT IT DOES:
 4. Provides interactive mode for Q&A
 
 KEY FUNCTIONS:
-- main()           â†’ CLI argument parsing
-- query()          â†’ ReAct agent loop
-- process_papers() â†’ Triggers PDF processing
-- build_database() â†’ Triggers embedding creation
+- main()           -> CLI argument parsing
+- query()          -> ReAct agent loop
+- process_papers() -> Triggers PDF processing
+- build_database() -> Triggers embedding creation
 ```
 
-#### ðŸ¤– `agent.py` - The Brain (ReAct Agent)
+#### - `agent.py` - The Brain (ReAct Agent)
 ```
 ROLE: Intelligent reasoning engine
 
@@ -242,22 +242,22 @@ WHAT IT DOES:
 5. Repeats until answer is found
 
 KEY COMPONENTS:
-- GeminiAgent class  â†’ Wraps Gemini API
-- query() function   â†’ Main reasoning loop
-- known_actions      â†’ Available tools (search_db, load_titles)
+- GeminiAgent class  -> Wraps Gemini API
+- query() function   -> Main reasoning loop
+- known_actions      -> Available tools (search_db, load_titles)
 
 EXAMPLE FLOW:
 Question: "Which BGR has lowest power?"
-  â†’ Thought: "I need to find all BGR circuits first"
-  â†’ Action: load_titles: True
-  â†’ Observation: [list of paper titles]
-  â†’ Thought: "Now I'll search each paper for power consumption"
-  â†’ Action: search_db: "power consumption BGR circuit Paper1"
-  â†’ Observation: "100nW power consumption..."
-  â†’ ... (continues until answer is complete)
+  -> Thought: "I need to find all BGR circuits first"
+  -> Action: load_titles: True
+  -> Observation: [list of paper titles]
+  -> Thought: "Now I'll search each paper for power consumption"
+  -> Action: search_db: "power consumption BGR circuit Paper1"
+  -> Observation: "100nW power consumption..."
+  -> ... (continues until answer is complete)
 ```
 
-#### ðŸ” `search.py` - Hybrid Search Engine
+#### " `search.py` - Hybrid Search Engine
 ```
 ROLE: Finds relevant information from the database
 
@@ -268,17 +268,17 @@ WHAT IT DOES:
 4. Reranking: Uses Cohere to reorder by relevance
 
 KEY CLASSES:
-- ContextualVectorDB    â†’ Manages embeddings and vector search
-- ElasticSearchBM25     â†’ Manages keyword search
-- retrieve_advanced()   â†’ Hybrid retrieval
-- retrieve_rerank()     â†’ Adds Cohere reranking
+- ContextualVectorDB    -> Manages embeddings and vector search
+- ElasticSearchBM25     -> Manages keyword search
+- retrieve_advanced()   -> Hybrid retrieval
+- retrieve_rerank()     -> Adds Cohere reranking
 
 EMBEDDINGS USED:
 - text-embedding-004 (768 dimensions)
 - Contextual: Each chunk gets document-level context added
 ```
 
-#### ðŸ“‘ `pdf2json_chunked.py` - PDF Processor
+#### "' `pdf2json_chunked.py` - PDF Processor
 ```
 ROLE: Converts PDFs into searchable data
 
@@ -304,7 +304,7 @@ OUTPUT FORMAT:
 }
 ```
 
-#### ðŸ’¬ `messages.py` - System Prompts
+#### ' `messages.py` - System Prompts
 ```
 ROLE: Defines how the AI agent behaves
 
@@ -315,7 +315,7 @@ WHAT IT CONTAINS:
 - Specialized prompts: For images, equations, graphs
 ```
 
-#### ðŸ“– `fullcontext.py` - Full Document Q&A
+#### "- `fullcontext.py` - Full Document Q&A
 ```
 ROLE: Answers questions using complete document context
 
@@ -329,7 +329,7 @@ When you need information that spans the whole document,
 not just a specific chunk (e.g., "What is the title?")
 ```
 
-#### ðŸ“š `load_titles.py` - Title Manager
+#### " `load_titles.py` - Title Manager
 ```
 ROLE: Manages paper titles for the agent
 
@@ -395,7 +395,7 @@ python agent.py --query "Show me a PTAT circuit schematic"
 
 ---
 
-## ðŸŽ¯ Quick Reference
+##  Quick Reference
 
 | Command | Purpose |
 |---------|---------|
@@ -407,7 +407,7 @@ python agent.py --query "Show me a PTAT circuit schematic"
 
 ---
 
-## â“ Common Questions
+## " Common Questions
 
 **Q: How long does processing take?**
 A: ~5-10 seconds per PDF for text extraction, ~2-5 seconds per chunk for embedding.

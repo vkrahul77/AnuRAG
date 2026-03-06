@@ -9,39 +9,39 @@ The hybrid search in AnuRAG combines:
 **Together they provide 10-20% better retrieval accuracy** than either alone!
 
 ```
-â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
-â”‚                      Your Query                              â”‚
-â”‚         "low power bandgap reference circuit"                â”‚
-â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
-                          â”‚
-          â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”´â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
-          â–¼                               â–¼
-â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”       â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
-â”‚  Semantic Search    â”‚       â”‚  BM25 Search            â”‚
-â”‚  (Gemini Embeddings)â”‚       â”‚  (Elasticsearch)        â”‚
-â”‚                     â”‚       â”‚                         â”‚
-â”‚  Finds: "voltage    â”‚       â”‚  Finds: exact match     â”‚
-â”‚  reference with     â”‚       â”‚  "bandgap reference"    â”‚
-â”‚  minimal power"     â”‚       â”‚  "low power"            â”‚
-â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜       â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
-          â”‚                               â”‚
-          â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
-                          â–¼
-              â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
-              â”‚   Reciprocal Rank       â”‚
-              â”‚   Fusion (RRF)          â”‚
-              â”‚   Combines both scores  â”‚
-              â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
-                          â–¼
-              â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
-              â”‚   Cohere Reranking      â”‚
-              â”‚   (Optional)            â”‚
-              â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
-                          â–¼
-              â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
-              â”‚   Top 10 Results        â”‚
-              â”‚   Best of both worlds!  â”‚
-              â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
++-------------------------------------------------------------+
+|                      Your Query                              |
+|         "low power bandgap reference circuit"                |
++-------------------------|-----------------------------------+
+                          |
+          +---------------"---------------+
+          v                               v
++---------------------+       +-------------------------+
+|  Semantic Search    |       |  BM25 Search            |
+|  (Gemini Embeddings)|       |  (Elasticsearch)        |
+|                     |       |                         |
+|  Finds: "voltage    |       |  Finds: exact match     |
+|  reference with     |       |  "bandgap reference"    |
+|  minimal power"     |       |  "low power"            |
++---------|-----------+       +-----------|-------------+
+          |                               |
+          +---------------|---------------+
+                          v
+              +-------------------------+
+              |   Reciprocal Rank       |
+              |   Fusion (RRF)          |
+              |   Combines both scores  |
+              +-----------|-------------+
+                          v
+              +-------------------------+
+              |   Cohere Reranking      |
+              |   (Optional)            |
+              +-----------|-------------+
+                          v
+              +-------------------------+
+              |   Top 10 Results        |
+              |   Best of both worlds!  |
+              +-------------------------+
 ```
 
 ---
@@ -161,11 +161,11 @@ from elasticsearch import Elasticsearch
 
 es = Elasticsearch('http://localhost:9200')
 if es.ping():
-    print('âœ… Elasticsearch is connected!')
+    print('... Elasticsearch is connected!')
     info = es.info()
     print(f'   Version: {info[\"version\"][\"number\"]}')
 else:
-    print('âŒ Cannot connect to Elasticsearch')
+    print(' Cannot connect to Elasticsearch')
 "
 ```
 
@@ -264,4 +264,4 @@ curl http://localhost:9200/_cluster/health
 2. **Run**: `docker run -d --name elasticsearch -p 9200:9200 -e "discovery.type=single-node" -e "xpack.security.enabled=false" elasticsearch:8.11.0`
 3. **Verify**: http://localhost:9200
 4. **Rebuild DB**: `python main.py --build_db`
-5. **Enjoy hybrid search!** ðŸŽ‰
+5. **Enjoy hybrid search!** 

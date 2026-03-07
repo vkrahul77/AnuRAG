@@ -1,0 +1,27 @@
+cff-version: 1.2.0
+message: "If you use this software or draw on ideas from this work, please cite it as below."
+title: "AnuRAG: Retrieval-Augmented Analog Design Assistant"
+authors:
+  - family-names: Kumar
+    given-names: Vikas
+    affiliation: University of Hawaii
+    email: vikas@hawaii.edu
+type: software
+date-released: 2026-02-25
+url: "https://github.com/vkrahul77/AnuRAG"
+keywords:
+  - analog-ic-design
+  - retrieval-augmented-generation
+  - gm-over-id
+  - pareto-optimization
+  - circuit-design-automation
+abstract: >-
+  AnuRAG is a two-stage retrieval-augmented generation framework
+  for analog integrated-circuit design that combines literature-grounded
+  topology selection with equation-driven design-space exploration
+  using gm/ID look-up tables and Pareto optimization.
+license: Apache-2.0
+notes: >-
+  Presented at the NSF-funded Analog Design Automation Workshop 2026.
+  Full manuscript in preparation. Please contact the author before
+  reusing substantial portions of the code or methodology.

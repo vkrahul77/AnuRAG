@@ -63,105 +63,22 @@ Switch providers with a single environment variable (`LLM_PROVIDER`).
 
 ```
 AnuRAG/
-|-- .env.example              # Template -- fill in your API keys
-|-- .gitignore
 |-- README.md                 # This file
+|-- CITATION.cff              # Citation metadata (GitHub "Cite this repository")
+|-- LICENSE                   # Apache License 2.0
 |-- AnURAG_flowchart.tex      # LaTeX TikZ diagram of the full pipeline
-|-- requirements.txt          # pip dependencies
-|-- environment.yml           # Conda environment spec
-|-- run_anurag.bat            # Windows launcher
-|-- setup_conda_env.bat       # Windows conda setup
-|-- setup_conda_env.sh        # Linux/Mac conda setup
+|-- .gitignore
 |
 |-- QUICKSTART.md             # 5-minute getting started
 |-- SETUP_GUIDE.md            # Detailed setup & architecture
 |-- API_CONFIGURATION.md      # API key configuration guide
-|-- ELASTICSEARCH_SETUP.md    # Optional BM25 search backend
-|
-+-- gemini/
-    |-- Design_Question.txt   # Example design prompt
-    |-- finalAgent_db/        # Vector DB (auto-generated, git-ignored)
-    |   +-- README.md
-    +-- tools/
-        |-- main.py           # Entry point -- CLI for all workflows
-        |-- agent.py          # ReAct agent loop
-        |-- search.py         # Hybrid search (semantic + BM25 + rerank)
-        |-- messages.py       # Stage 1 & 2 system prompts
-        |-- fullcontext.py    # Full-document Q&A with vision
-        |-- load_titles.py    # Paper title management
-        |-- pdf2json_chunked.py  # Async PDF -> chunked JSON
-        |-- config.py         # Centralized configuration
-        |-- llm_provider.py   # LLM abstraction (Gemini / Claude)
-        |-- run_contextualize.py # Batch contextual embedding
-        +-- web_scraper.py    # Web/arXiv scraping utilities
++-- ELASTICSEARCH_SETUP.md    # Optional BM25 search backend
 ```
 
----
-
-## Quick Start
-
-### 1. Clone
-
-```bash
-git clone https://github.com/vkrahul77/AnuRAG.git
-cd AnuRAG
-```
-
-### 2. Environment Setup
-
-**Option A -- Conda (recommended)**:
-```bash
-conda env create -f environment.yml
-conda activate anurag
-```
-
-**Option B -- pip**:
-```bash
-python -m venv venv
-# Windows: venv\Scripts\activate | Linux/Mac: source venv/bin/activate
-pip install -r requirements.txt
-```
-
-### 3. Configure API Keys
-
-```bash
-cp .env.example .env
-# Edit .env and fill in your keys
-```
-
-At minimum you need:
-- `GOOGLE_API_KEY` -- required for embeddings & vision (get from [Google AI Studio](https://makersuite.google.com/app/apikey))
-- `LLM_PROVIDER` -- set to `gemini` or `claude`
-- `ANTHROPIC_API_KEY` -- only if using Claude
-
-Optional:
-- `COHERE_API_KEY` -- enables reranking for better retrieval precision
-- Elasticsearch -- see [ELASTICSEARCH_SETUP.md](ELASTICSEARCH_SETUP.md) for BM25 hybrid search
-
-### 4. Process Your Papers
-
-```bash
-cd gemini/tools
-
-# Process PDFs from a directory
-python main.py --process_papers "/path/to/your/papers"
-
-# Build the vector database
-python main.py --build_db
-
-# (Optional) Add contextual embeddings for better retrieval
-python run_contextualize.py
-```
-
-### 5. Query
-
-```bash
-# Single query
-python main.py --query "Which topology achieves >70dB gain with 500MHz GBW?"
-
-# Interactive mode
-python main.py --interactive
-```
+> **Note:** The full implementation source code (RAG pipeline, agent loop,
+> gm/ID-based design-space exploration) will be released after the
+> accompanying journal paper is published. For early access, please
+> contact the author at vikas@hawaii.edu.
 
 ---
 
@@ -196,17 +113,6 @@ AnuRAG: [Generates executable Python script]
 
 ---
 
-## Bringing Your Own Papers
-
-AnuRAG is designed to work with **your own** paper collection. You supply PDFs (e.g., IEEE JSSC, ISSCC, textbook chapters), and the system builds a private knowledge base. No papers are included in this repository.
-
-Recommended sources:
-- IEEE JSSC / ISSCC papers in your research area
-- Textbooks (Razavi, Allen & Holberg, Murmann gm/ID lectures, etc.)
-- Your own lab's publications and notes
-
----
-
 ## Documentation
 
 | Guide | Description |
@@ -215,6 +121,31 @@ Recommended sources:
 | [SETUP_GUIDE.md](SETUP_GUIDE.md) | Full architecture & walkthrough |
 | [API_CONFIGURATION.md](API_CONFIGURATION.md) | API keys & model selection |
 | [ELASTICSEARCH_SETUP.md](ELASTICSEARCH_SETUP.md) | Optional BM25 hybrid search |
+
+---
+
+## Attribution
+
+> This repository accompanies work presented at the **NSF-funded Analog Design Automation Workshop 2026**.
+> The full manuscript is in preparation. If you use ideas, methodology, or code from this
+> repository, please cite the work using the information below or contact the author.
+
+### Citing This Work
+
+If you use AnuRAG in your research, please cite:
+
+```bibtex
+@software{kumar2026anurag,
+  author       = {Kumar, Vikas},
+  title        = {{AnuRAG}: Retrieval-Augmented Analog Design Assistant},
+  year         = {2026},
+  url          = {https://github.com/vkrahul77/AnuRAG},
+  note         = {Presented at the NSF-funded Analog Design Automation Workshop 2026.
+                  Manuscript in preparation.}
+}
+```
+
+GitHub will also show a **"Cite this repository"** button automatically from the [CITATION.cff](CITATION.cff) file.
 
 ---
 
@@ -228,4 +159,9 @@ Recommended sources:
 
 ## License
 
-MIT License
+Copyright 2026 Vikas Kumar. Licensed under the [Apache License 2.0](LICENSE).
+
+> **Note:** The full implementation code will be released after journal publication.
+> This public repository currently contains architecture documentation, example
+> workflows, and configuration templates. For access to the full pipeline code,
+> please contact the author at vikas@hawaii.edu.
